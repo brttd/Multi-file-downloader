@@ -1,0 +1,28 @@
+{
+	"manifest_version": 2,
+	"name": "Multi-File downloader",
+	"version": "0.1",
+	
+	"description": "Easily and quickly download files from a page.",
+	
+	"browser_action": {
+		"default_icon": {
+			"19": "icon19.png",
+			"38": "icon38.png"
+		},
+		"default_title": "Multi-File downloader"
+	},
+	
+	"author": "Brett Doyle",
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
+	
+	"permissions": [
+		"downloads",
+		"tabs",
+		"activeTab",
+		"storage"
+	]
+}
