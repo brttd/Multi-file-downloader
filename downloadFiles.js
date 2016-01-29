@@ -13,7 +13,7 @@ if (window.injectedDownloader ) {
 			{
 				tag: "p",
 				className: "header",
-				textContent: "Multi-File downloader"
+				textContent: "Multi-File Downloader"
 			},
 			{
 				tag: "div",
@@ -21,25 +21,52 @@ if (window.injectedDownloader ) {
 				children: [
 					{
 						tag: "label",
-						for: "extensionFilter",
-						textContent: "extensions"
+						htmlFor: "extensionFilter",
+						textContent: "Filter Extensions:"
 					},
 					{
-						tag: "input",
-						type: "checkbox",
-						id: "blackListExtensions"
-					},
-					{
-						tag: "input",
-						type: "text",
-						id: "extensionFilter",
-						className: "text",
-						value: ".mp3"
-					},
-					{
-						tag: "button",
-						id: "updateFileList",
-						textContent: "#"
+						tag: "div",
+						className: "filterBox",
+						children: [
+							{
+								tag: "input",
+								type: "checkbox",
+								id: "blackListExtensions"
+							},
+							{
+								tag: "label",
+								htmlFor: "blackListExtensions",
+								textContent: "Blacklist",
+								children: [
+									{
+										tag: "div",
+										className: "switch",
+										children: [
+											{
+												tag: "div",
+												className: "button"
+											}
+										]
+									}
+								]
+							},
+							{
+								tag: "br"
+							},
+							{
+								tag: "input",
+								type: "text",
+								spellcheck: "false",
+								id: "extensionFilter",
+								className: "text",
+								value: ".mp3"
+							},
+							{
+								tag: "button",
+								id: "updateFileList",
+								textContent: "#"
+							}
+						]
 					}
 				]
 			},
@@ -48,38 +75,16 @@ if (window.injectedDownloader ) {
 				className: "section filenames",
 				children: [
 					{
-						tag: "div",
-						id: "folderSettings",
-						children: [
-							{
-								tag: "label",
-								for: "folderName",
-								textContent: "folder"
-							},
-							{
-								tag: "input",
-								type: "text",
-								id: "folderName",
-								className: "text"
-							}
-						]
+						tag: "label",
+						htmlFor: "folderName",
+						textContent: "Folder:"
 					},
 					{
-						tag: "div",
-						id: "fileSettings",
-						children: [
-							{
-								tag: "label",
-								for: "filename",
-								textContent: "file names"
-							},
-							{
-								tag: "input",
-								type: "text",
-								id: "filename",
-								className: "text"
-							}
-						]
+						tag: "input",
+						type: "text",
+						spellcheck: "false",
+						id: "folderName",
+						className: "text"
 					}
 				]
 			},
@@ -105,6 +110,9 @@ if (window.injectedDownloader ) {
 		]
 	}));
 	
+	//the refesh button needs it's icon
+	document.getElementById("updateFileList").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
+	
 	updateList([], true);
 	
 	var port = chrome.runtime.connect({name: "download_info"});
@@ -116,11 +124,9 @@ if (window.injectedDownloader ) {
 	document.getElementById('downloadAllFiles').addEventListener('click', function(e) {
 		for (var i = 0; i < window.urls.length; i++) {
 			var folder = getValidFolderName(document.getElementById("folderName").value.trim());
-			var filename = document.getElementById("filename").value.trim();
 			port.postMessage({
 				url: window.urls[i],
-				folder: folder,
-				filename: filename
+				folder: folder
 			});
 		}
 	});
@@ -139,7 +145,7 @@ if (window.injectedDownloader ) {
 	
 	
 	//enabling moving of popup
-	window.popupPosition = [window.innerWidth / 2 - (1 / (100.0 / 25)) * window.innerWidth / 2 - 1 - 1 - 2 - 10, 10];
+	window.popupPosition = [10, 10];
 	updatePosition();
 	
 	window.dragging = false;
@@ -193,6 +199,14 @@ function getReadableFileSize(fileSizeInBytes) {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 };
 
+function removeFile() {
+	var url = this.parentNode.children[2].children[0].href;
+	var index = window.urls.indexOf(url);
+	if (index != -1) {
+		window.urls.splice(index, 1);
+	}
+	this.parentNode.parentNode.removeChild(this.parentNode);
+}
 
 function getLinks(validExtensions, blacklist) {
 	var links = document.getElementsByTagName("a");
@@ -226,11 +240,16 @@ function updateList(validExtensions, blacklist) {
 	window.urls = getLinks(validExtensions, blacklist);
 	//update the list
 	var list = document.getElementById('fileList');
-	list.innerHTML = "<thead><tr><th>Domain</th><th>Name</th><th>Type</th><th>Size</th></tr></thead>";
+	list.innerHTML = "<thead><tr><th></th><th>Domain</th><th>Name</th><th>Type</th><th>Size</th></tr></thead>";
 	for (var i = 0; i < window.urls.length; i++) {
 		list.appendChild(createElementFromObject({
 			tag: "tr",
 			children: [
+				{
+					tag: "td",
+					className: "removeButton",
+					textContent: "x",
+				},
 				{
 					tag: "td",
 					className: "domain",
@@ -238,9 +257,15 @@ function updateList(validExtensions, blacklist) {
 				},
 				{
 					tag: "td",
-					className: "link IGNORE_DO_NOT_DOWNLOAD",
-					href: window.urls[i],
-					textContent: window.urls[i].split("/").pop().split(".")[0]
+					className: "link",
+					children: [
+						{
+							tag: "a",
+							className: "IGNORE_DO_NOT_DOWNLOAD",
+							href: window.urls[i],
+							textContent: window.urls[i].split("/").pop().split(".")[0]
+						}
+					]
 				},
 				{
 					tag: "td",
@@ -256,8 +281,9 @@ function updateList(validExtensions, blacklist) {
 		}));
 		get_filesize(window.urls[i], i, function(size, index) {
 			//(the index has to be +1 because of the headers ("domain", "name", etc)
-			list.children[index + 1].children[3].textContent = getReadableFileSize(size);
+			list.children[index + 1].children[4].textContent = getReadableFileSize(size);
 		});
+		list.children[list.children.length - 1].children[0].addEventListener("click", removeFile);
 	}
 	console.info("found", i, "files");
 }
@@ -289,6 +315,9 @@ function createElementFromObject(object) {
 					}
 				} else {
 					element[prop] = object[prop];
+					if (prop == "spellcheck") {
+						element.spellcheck = false;
+					}
 				}
 			}
 		}

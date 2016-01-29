@@ -19,6 +19,10 @@
 		"persistent": false
 	},
 	
+	"web_accessible_resources": [
+		"refreshIcon.png"
+	],
+	
 	"permissions": [
 		"downloads",
 		"tabs",
