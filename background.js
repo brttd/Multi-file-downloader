@@ -6,7 +6,20 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 var filenameConflictAction = "uniquify";
 var displaySaveAsDialog = false;
 
+function getDomain(url) {
+	var domain = url.split("/")[(url.indexOf("://") == -1) ? 0 : 2];
+	return domain.split(":")[0];
+}
+
+var notificationFolders = {};
+
 chrome.runtime.onConnect.addListener(function(port) {
+	
+	var notifyOnFinish = false;
+	var toFinish = [];
+	var domains = [];
+	var domainBackup = "??";
+	
 	port.onMessage.addListener(function(message) {
 		if (message.url) {
 			//get a filename based on what was sent
@@ -18,9 +31,62 @@ chrome.runtime.onConnect.addListener(function(port) {
 				filename: filename,
 				conflictAction: filenameConflictAction,
 				saveAs: displaySaveAsDialog
+			}, function(id) {
+				toFinish.push(id);
 			});
+			if (domains.indexOf(getDomain(message.url)) == -1) {
+				domains.push(getDomain(message.url));
+			}
+		} else if (typeof(message.notifyOnFinish) != "undefined") {
+			notifyOnFinish = message.notifyOnFinish;
+		} else if (typeof(message.domain) != "undefined") {
+			console.log(message.domain);
+			domainBackup = message.domain;
 		}
 	});
+	
+	chrome.downloads.onChanged.addListener(function(data) {
+		if (toFinish.indexOf(data.id) != -1) {
+			if (data.state) {
+				if (data.state.current == "complete") {
+					//remove it from the list of files yet to finish downloading
+					toFinish.splice(toFinish.indexOf(data.id), 1);
+					if (toFinish.length == 0) {
+						if (notifyOnFinish) {
+							var domainsString = "";
+							if (domains.length == 1) {
+								domainsString = domains[0];
+							} else if (domainsString > 1) {
+								for (var i = 0; i < domains.length - 1; i++) {
+									domainsString += domains[i] + ", ";
+								}
+								domainsString += "& " + domains[domains.length - 1];
+							}
+							domainsString.trim();
+							if (domainsString == "") {
+								domainsString = domainBackup;
+							}
+							chrome.notifications.create({
+								type: "basic",
+								iconUrl: "icon80.png",
+								title: "Multi-File Downloader",
+								message: "The files from " + domainsString + " have finished downloading!",
+								contextMessage: "Click here to view.",
+								isClickable: true
+							}, function(id) {
+								notificationFolders[id] = data.id;
+							});
+						}
+					}
+				}
+			}
+		}
+	});
+});
+
+chrome.notifications.onClicked.addListener(function(id) {
+	chrome.downloads.show(notificationFolders[id]);
+	chrome.notifications.clear(id);
 });
 
 //load settings
