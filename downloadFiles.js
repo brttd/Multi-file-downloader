@@ -212,7 +212,7 @@ if (window.injectedDownloader ) {
 				Only files of the specified types will be searched for.<br>\
 				If you want to exclude certain file types, you can enable the \"Blacklist\" option.<br>\
 				If the \"Blacklist\" option is green, all file types apart from those specified will be searched for.<br>\
-				To update the list of files to be filtered according to the extension type, press the refresh button on the right of the extension type box.",
+				To update the list of files to be filtered according to the extension type, press the refresh button on the right of the extension type box (note, updating the list will re-add any files which were previously removed).",
 				"Downloaded files are saved to the default Chrome downloads folder, normally User/Downloads.<br>\
 				If you would like to have the files placed in a sub folder within the downloads folder, enter the name of the folder in the \"Folder:\" text box.<br>\
 				You can enter multiple sub folders, seperated by a \"/\" character.<br>\
