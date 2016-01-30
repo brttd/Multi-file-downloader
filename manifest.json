@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
-	"name": "Multi-File downloader",
-	"version": "1.0",
+	"name": "Multi-File Downloader",
+	"version": "1.1",
 	
 	"description": "Easily and quickly download files from a page.",
 	
@@ -19,7 +19,7 @@
 			"19": "icon19.png",
 			"38": "icon38.png"
 		},
-		"default_title": "Multi-File downloader"
+		"default_title": "Multi-File Downloader"
 	},
 	
 	"author": "Brett Doyle",
