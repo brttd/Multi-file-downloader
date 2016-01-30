@@ -6,6 +6,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 var filenameConflictAction = "uniquify";
 var displaySaveAsDialog = false;
 
+var displayHelp = false;
+
 function getDomain(url) {
 	var domain = url.split("/")[(url.indexOf("://") == -1) ? 0 : 2];
 	return domain.split(":")[0];
@@ -14,6 +16,12 @@ function getDomain(url) {
 var notificationFolders = {};
 
 chrome.runtime.onConnect.addListener(function(port) {
+	
+	if (displayHelp) {
+		port.postMessage({displayHelp: true});
+		displayHelp = false;
+		chrome.storage.local.set({displayHelp: false});
+	}
 	
 	var notifyOnFinish = false;
 	var toFinish = [];
@@ -82,6 +90,14 @@ chrome.runtime.onConnect.addListener(function(port) {
 			}
 		}
 	});
+});
+
+chrome.storage.local.get("displayHelp", function(items) {
+	if (typeof(items.displayHelp) != "undefined") {
+		displayHelp = items.displayHelp;
+	} else {
+		displayHelp = true;
+	}
 });
 
 chrome.notifications.onClicked.addListener(function(id) {

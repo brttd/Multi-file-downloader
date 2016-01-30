@@ -1,6 +1,7 @@
 window.injectedDownloader = window.injectedDownloader || false;
 if (window.injectedDownloader ) {
 	//Already injected into page
+	document.getElementById("downloadPopup").className = "";
 } else {
 	//injected script for the first time
 	window.injectedDownloader = true;
@@ -16,26 +17,112 @@ if (window.injectedDownloader ) {
 			},
 			{
 				tag: "div",
-				className: "section filters",
+				id: "popupControls",
 				children: [
 					{
-						tag: "label",
-						htmlFor: "extensionFilter",
-						textContent: "Filter Extensions:"
+						tag: "div",
+						id: "popupDisplayHelp",
+						textContent: "?"
 					},
 					{
 						tag: "div",
-						className: "filterBox",
+						id: "popupClose",
+						textContent: "x"
+					}
+				]
+			},
+			{
+				tag: "div",
+				id: "mainDownloads",
+				children: [
+					{
+						tag: "div",
+						className: "section filters",
+						children: [
+							{
+								tag: "label",
+								htmlFor: "extensionFilter",
+								textContent: "Filter By Extension Types:"
+							},
+							{
+								tag: "div",
+								className: "filterBox",
+								children: [
+									{
+										tag: "input",
+										type: "checkbox",
+										id: "blackListExtensions"
+									},
+									{
+										tag: "label",
+										htmlFor: "blackListExtensions",
+										textContent: "Blacklist",
+										children: [
+											{
+												tag: "div",
+												className: "switch",
+												children: [
+													{
+														tag: "div",
+														className: "button"
+													}
+												]
+											}
+										]
+									},
+									{
+										tag: "br"
+									},
+									{
+										tag: "input",
+										type: "text",
+										spellcheck: "false",
+										id: "extensionFilter",
+										className: "text",
+										value: "",
+										placeholder: "file types"
+									},
+									{
+										tag: "button",
+										id: "updateFileList",
+										textContent: "#"
+									}
+								]
+							}
+						]
+					},
+					{
+						tag: "div",
+						className: "section filenames",
+						children: [
+							{
+								tag: "label",
+								htmlFor: "folderName",
+								textContent: "Folder:"
+							},
+							{
+								tag: "input",
+								type: "text",
+								spellcheck: "false",
+								id: "folderName",
+								className: "text"
+							}
+						]
+					},
+					{
+						tag: "div",
+						className: "section fileList",
 						children: [
 							{
 								tag: "input",
 								type: "checkbox",
-								id: "blackListExtensions"
+								id: "notifyOnFinish"
 							},
 							{
 								tag: "label",
-								htmlFor: "blackListExtensions",
-								textContent: "Blacklist",
+								htmlFor: "notifyOnFinish",
+								id: "notifyOnFinishLabel",
+								textContent: "Notify when finished",
 								children: [
 									{
 										tag: "div",
@@ -50,81 +137,18 @@ if (window.injectedDownloader ) {
 								]
 							},
 							{
-								tag: "br"
-							},
-							{
-								tag: "input",
-								type: "text",
-								spellcheck: "false",
-								id: "extensionFilter",
-								className: "text",
-								value: ""
-							},
-							{
 								tag: "button",
-								id: "updateFileList",
-								textContent: "#"
-							}
-						]
-					}
-				]
-			},
-			{
-				tag: "div",
-				className: "section filenames",
-				children: [
-					{
-						tag: "label",
-						htmlFor: "folderName",
-						textContent: "Folder:"
-					},
-					{
-						tag: "input",
-						type: "text",
-						spellcheck: "false",
-						id: "folderName",
-						className: "text"
-					}
-				]
-			},
-			{
-				tag: "div",
-				className: "section fileList",
-				children: [
-					{
-						tag: "input",
-						type: "checkbox",
-						id: "notifyOnFinish"
-					},
-					{
-						tag: "label",
-						htmlFor: "notifyOnFinish",
-						id: "notifyOnFinishLabel",
-						textContent: "Notify when finished",
-						children: [
+								id: "downloadAllFiles",
+								textContent: "Download all!"
+							},
 							{
-								tag: "div",
-								className: "switch",
+								tag: "table",
+								className: "files",
+								id: "fileList",
 								children: [
-									{
-										tag: "div",
-										className: "button"
-									}
+									
 								]
 							}
-						]
-					},
-					{
-						tag: "button",
-						id: "downloadAllFiles",
-						textContent: "Download all!"
-					},
-					{
-						tag: "table",
-						className: "files",
-						id: "fileList",
-						children: [
-							
 						]
 					}
 				]
@@ -137,6 +161,91 @@ if (window.injectedDownloader ) {
 	
 	updateList([], true);
 	
+	function displayNextHelp(prevElem, nextElem, text) {
+		document.getElementById("popupHelpDialogText").innerHTML = text;
+		
+		if (prevElem) {prevElem.className = prevElem.className.replace("highlight", "");}
+		if (nextElem) {
+			nextElem.className += " highlight";
+			nextElem.scrollIntoView({block: "end", behavior: "smooth"});
+		}
+	}
+	
+	var helpOpen = false;
+	function displayHelp() {
+		if (!helpOpen) {
+			helpOpen = true;
+			var popup = document.getElementById('downloadPopup').children[2];
+			
+			document.getElementById('downloadPopup').appendChild(createElementFromObject({
+				tag: "div",
+				id: "popupHelpDialog",
+				children: [
+					{
+						tag: "p",
+						id: "popupHelpDialogText"
+					},
+					{
+						tag: "button",
+						id: "popupHelpDialogNextButton",
+						textContent: "next"
+					}
+				]
+			}));
+			
+			var helpElements = [
+				popup.children[2],
+				popup.children[0],
+				popup.children[1],
+				document.getElementById("popupControls")
+			];
+			
+			var helpText = [
+				"This is the area controls the actual downloads<br>\
+				The table at the bottom displays all the files which have been found.<br>\
+				Files can be removed by clicking the \"x\" button on the left.<br>\
+				The table also contains the domain from which the file is from (a website can link to files from other websites), a direct link to the file, the file type (extension), and size (Occasionally the file size will not be available).<br>\
+				To download all of the listed files, press the \"Download All!\" button.<br>\
+				If you would like to have a notification appear when all of the files have finished downloading, click the \"Notify when finished\" button to toggle it on/off. When green, a notification will appear.",
+				"This allows you to filter the files by their extension type.<br>\
+				Enter the file types (.mp3, .pdf, for example) in the text box, seperated by commas.<br>\
+				Only files of the specified types will be searched for.<br>\
+				If you want to exclude certain file types, you can enable the \"Blacklist\" option.<br>\
+				If the \"Blacklist\" option is green, all file types apart from those specified will be searched for.<br>\
+				To update the list of files to be filtered according to the extension type, press the refresh button on the right of the extension type box.",
+				"Downloaded files are saved to the default Chrome downloads folder, normally User/Downloads.<br>\
+				If you would like to have the files placed in a sub folder within the downloads folder, enter the name of the folder in the \"Folder:\" text box.<br>\
+				You can enter multiple sub folders, seperated by a \"/\" character.<br>\
+				If the folder does not exist, it will be created.",
+				"To close the popup, click the \"x\" button.<br>\
+				If you would like to view this help again, click the \"?\" button."
+			];
+			
+			displayNextHelp(false, helpElements[0], helpText[0]);
+			
+			var index = 0;
+			
+			document.getElementById("popupHelpDialogNextButton").addEventListener('click', function(e) {
+				index += 1;
+				if (index >= helpElements.length) {
+					//close the help
+					document.getElementById("downloadPopup").removeChild(document.getElementById("popupHelpDialog"));
+					
+					//remove the highlight
+					helpElements[helpElements.length - 1].className = helpElements[helpElements.length - 1].className.replace("highlight", "");
+					
+					helpOpen = false;
+				} else {
+					displayNextHelp(helpElements[index - 1], helpElements[index], helpText[index]);
+					
+					if (index >= helpElements.length - 1) {
+						document.getElementById("popupHelpDialogNextButton").textContent = "finish";
+					}
+				}
+			});
+		}
+	}
+	
 	var port = chrome.runtime.connect({name: "download_info"});
 	
 	port.postMessage({
@@ -144,7 +253,16 @@ if (window.injectedDownloader ) {
 	});
 	
 	port.onMessage.addListener(function(message) {
-		console.info("Recieved message", message);
+		if (message.displayHelp) {
+			displayHelp();
+		}
+	});
+	
+	document.getElementById("popupClose").addEventListener('click', function(e) {
+		document.getElementById("downloadPopup").className = "hidden";
+	});
+	document.getElementById("popupDisplayHelp").addEventListener('click', function(e) {
+		displayHelp();
 	});
 	
 	document.getElementById("downloadAllFiles").addEventListener('click', function(e) {
@@ -230,7 +348,11 @@ if (window.injectedDownloader ) {
 			fileSizeInBytes = fileSizeInBytes / 1024;
 			i++;
 		} while (fileSizeInBytes > 1024);
-
+		
+		if (isNaN(fileSizeInBytes)) {
+			return "unknown";
+		}
+		
 		return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 	};
 
@@ -310,7 +432,7 @@ if (window.injectedDownloader ) {
 					{
 						tag: "td",
 						className: "size",
-						textContent: "??"
+						textContent: "unknown"
 					}
 				]
 			}));
