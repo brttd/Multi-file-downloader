@@ -3,7 +3,7 @@
 	
 	position: fixed;
 	
-	max-width: calc(100vw - 20px);
+	max-width: calc(50vw - 20px);
 	max-height: calc(100vh - 10px);
 	
 	padding: 10px;
@@ -385,7 +385,7 @@
 	left: calc(100% + 8px);
 	
 	width: fit-content;
-	max-width: 30vw;
+	max-width: calc(100% - 20px - 8px);
 	
 	padding: 10px;
 	
@@ -405,7 +405,8 @@
 }
 #downloadPopup #popupHelpDialog p, button {
 	text-align: left;
-	width: inherit;
+	
+	width: fit-content;
 	
 	font-size: 15px;
 	line-height: 1.2;

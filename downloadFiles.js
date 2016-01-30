@@ -223,6 +223,12 @@ if (window.injectedDownloader ) {
 			
 			displayNextHelp(false, helpElements[0], helpText[0]);
 			
+			
+			if (window.popupPosition[0] > window.innerWidth - document.getElementById('downloadPopup').offsetWidth - document.getElementById('popupHelpDialog').offsetWidth - 30) {
+				window.popupPosition[0] = window.innerWidth - document.getElementById('downloadPopup').offsetWidth - document.getElementById('popupHelpDialog').offsetWidth - 30;
+				updatePosition();
+			}
+			
 			var index = 0;
 			
 			document.getElementById("popupHelpDialogNextButton").addEventListener('click', function(e) {
