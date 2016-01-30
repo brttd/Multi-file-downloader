@@ -42,13 +42,13 @@ chrome.runtime.onConnect.addListener(function(port) {
 			}, function(id) {
 				toFinish.push(id);
 			});
-			if (domains.indexOf(getDomain(message.url)) == -1) {
-				domains.push(getDomain(message.url));
+			var tempDomain = getDomain(message.url).replace("www.", "");
+			if (domains.indexOf(tempDomain) == -1) {
+				domains.push(tempDomain);
 			}
 		} else if (typeof(message.notifyOnFinish) != "undefined") {
 			notifyOnFinish = message.notifyOnFinish;
 		} else if (typeof(message.domain) != "undefined") {
-			console.log(message.domain);
 			domainBackup = message.domain;
 		}
 	});
@@ -64,7 +64,7 @@ chrome.runtime.onConnect.addListener(function(port) {
 							var domainsString = "";
 							if (domains.length == 1) {
 								domainsString = domains[0];
-							} else if (domainsString > 1) {
+							} else if (domains.length > 1) {
 								for (var i = 0; i < domains.length - 1; i++) {
 									domainsString += domains[i] + ", ";
 								}
