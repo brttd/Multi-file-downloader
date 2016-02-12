@@ -156,6 +156,13 @@
 	font-size: 15px;
 	line-height: 1;
 }
+#downloadPopup .filterSection {
+	display: inline-block;
+	
+	margin: 0;
+	margin-right: 14px;
+	padding: 0;
+}
 #downloadPopup .filterBox {
 	margin: 0;
 	margin-top: -4px;
@@ -267,16 +274,16 @@
 	box-shadow: 0px 0px 1px 1px rgba(0, 255, 0, 0.5);
 	border-color: rgb(140, 220, 160);
 }
-#downloadPopup #updateFileList {
+#downloadPopup #updateFileList, #downloadPopup #updateFileList2 {
 	background-color: rgb(160, 160, 160);
 	
 	color: transparent;
 	-webkit-user-select: none;
 }
-#downloadPopup #updateFileList:hover {
+#downloadPopup #updateFileList:hover, #downloadPopup #updateFileList2:hover {
 	background-color: rgb(5, 200, 10);
 }
-#downloadPopup #updateFileList:active {
+#downloadPopup #updateFileList:active, #downloadPopup #updateFileList2:active {
 	background-color: rgb(0, 255, 0);
 }
 #downloadPopup #downloadAllFiles {

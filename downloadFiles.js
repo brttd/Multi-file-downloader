@@ -40,52 +40,114 @@ if (window.injectedDownloader ) {
 						className: "section filters",
 						children: [
 							{
-								tag: "label",
-								htmlFor: "extensionFilter",
-								textContent: "Filter By Extension Types:"
-							},
-							{
 								tag: "div",
-								className: "filterBox",
+								className: "filterSection",
 								children: [
 									{
-										tag: "input",
-										type: "checkbox",
-										id: "blackListExtensions"
+										tag: "label",
+										htmlFor: "extensionFilter",
+										textContent: "Filter By Extension Types:"
 									},
 									{
-										tag: "label",
-										htmlFor: "blackListExtensions",
-										textContent: "Blacklist",
+										tag: "div",
+										className: "filterBox",
 										children: [
 											{
-												tag: "div",
-												className: "switch",
+												tag: "input",
+												type: "checkbox",
+												id: "blackListExtensions"
+											},
+											{
+												tag: "label",
+												htmlFor: "blackListExtensions",
+												textContent: "Blacklist",
 												children: [
 													{
 														tag: "div",
-														className: "button"
+														className: "switch",
+														children: [
+															{
+																tag: "div",
+																className: "button"
+															}
+														]
 													}
 												]
+											},
+											{
+												tag: "br"
+											},
+											{
+												tag: "input",
+												type: "text",
+												spellcheck: "false",
+												id: "extensionFilter",
+												className: "text",
+												value: "",
+												placeholder: "file types"
+											},
+											{
+												tag: "button",
+												id: "updateFileList",
+												textContent: "#"
 											}
 										]
+									}
+								]
+							},
+							{
+								tag: "div",
+								className: "filterSection",
+								children: [
+									{
+										tag: "label",
+										htmlFor: "nameFilter",
+										textContent: "Filter By File Name:"
 									},
 									{
-										tag: "br"
-									},
-									{
-										tag: "input",
-										type: "text",
-										spellcheck: "false",
-										id: "extensionFilter",
-										className: "text",
-										value: "",
-										placeholder: "file types"
-									},
-									{
-										tag: "button",
-										id: "updateFileList",
-										textContent: "#"
+										tag: "div",
+										className: "filterBox",
+										children: [
+											{
+												tag: "input",
+												type: "checkbox",
+												id: "blackListNames"
+											},
+											{
+												tag: "label",
+												htmlFor: "blackListNames",
+												textContent: "Blacklist",
+												children: [
+													{
+														tag: "div",
+														className: "switch",
+														children: [
+															{
+																tag: "div",
+																className: "button"
+															}
+														]
+													}
+												]
+											},
+											{
+												tag: "br"
+											},
+											{
+												tag: "input",
+												type: "text",
+												spellcheck: "false",
+												id: "nameFilter",
+												className: "text",
+												value: "",
+												placeholder: "file names"
+											},
+											{
+												tag: "button",
+												id: "updateFileList2",
+												textContent: "#"
+											}
+										]
 									}
 								]
 							}
@@ -158,8 +220,9 @@ if (window.injectedDownloader ) {
 	
 	//the refesh button needs it's icon
 	document.getElementById("updateFileList").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
+	document.getElementById("updateFileList2").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
 	
-	updateList([], true);
+	updateList([], true, [], true);
 	
 	function displayNextHelp(prevElem, nextElem, text) {
 		document.getElementById("popupHelpDialogText").innerHTML = text;
@@ -299,7 +362,37 @@ if (window.injectedDownloader ) {
 				validExtensions.push(extensions[i]);
 			}
 		}
-		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked);
+		var names = document.getElementById("nameFilter").value.split(",");
+		var validNames = [];
+		for (var i = 0; i < names.length; i++) {
+			names[i] = names[i].trim().toLowerCase();
+			if (names[i].length > 0) {
+				validNames.push(names[i]);
+			}
+		}
+		
+		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked);
+	});
+	document.getElementById("updateFileList2").addEventListener('click', function(e) {
+		var extensions = document.getElementById("extensionFilter").value.split(",");
+		var validExtensions = [];
+		for (var i = 0; i < extensions.length; i++) {
+			//check it is a valid extension type
+			extensions[i] = extensions[i].trim().replace(/\./gi, '');
+			if (extensions[i].length > 0) {
+				validExtensions.push(extensions[i]);
+			}
+		}
+		var names = document.getElementById("nameFilter").value.split(",");
+		var validNames = [];
+		for (var i = 0; i < names.length; i++) {
+			names[i] = names[i].trim().toLowerCase();
+			if (names[i].length > 0) {
+				validNames.push(names[i]);
+			}
+		}
+		
+		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked);
 	});
 	
 	
@@ -370,8 +463,26 @@ if (window.injectedDownloader ) {
 		}
 		this.parentNode.parentNode.removeChild(this.parentNode);
 	}
-
-	function getLinks(validExtensions, blacklist) {
+	
+	function validName(name, validNames, blacklistNames) {
+		if (blacklistNames) {
+			for (var i = 0; i < validNames.length; i++) {
+				if (name.toLowerCase().indexOf(validNames[i]) != -1) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			for (var i = 0; i < validNames.length; i++) {
+				if (name.toLowerCase().indexOf(validNames[i]) != -1) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	function getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames) {
 		var links = document.getElementsByTagName("a");
 		var urls = [];
 		for (var i = 0; i < links.length; i++) {
@@ -382,15 +493,22 @@ if (window.injectedDownloader ) {
 					//check that it has an extension
 					if (extension) {
 						//check that the extension is on which is allowed
-						//(if blacklist is true, only allow extensions which are not in the list,
-						//if blacklist is false, only allow extensions which are in the list)
-						if (blacklist) {
+						//(if blacklistExtensions is true, only allow extensions which are not in the list,
+						//if blacklistExtensions is false, only allow extensions which are in the list)
+						var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
+						var nameCheck = validName(links[i].href, validNames, blacklistNames);
+						if (extensionCheck && nameCheck) {
+							urls.push(links[i].href);
+						}
+						/*
+						if (blacklistExtensions) {
 							if (validExtensions.indexOf(extension[1]) == -1) {
 								urls.push(links[i].href);
 							}
 						} else if (validExtensions.indexOf(extension[1]) != -1) {
 							urls.push(links[i].href);
 						}
+						*/
 					}
 				}
 			}
@@ -398,9 +516,9 @@ if (window.injectedDownloader ) {
 		return urls.sort();
 	}
 
-	function updateList(validExtensions, blacklist) {
+	function updateList(validExtensions, blacklistExtensions, validNames, blacklistNames) {
 		window.urls = [];
-		window.urls = getLinks(validExtensions, blacklist);
+		window.urls = getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames);
 		//update the list
 		var list = document.getElementById('fileList');
 		list.innerHTML = "<thead><tr><th></th><th>Domain</th><th>Name</th><th>Type</th><th>Size</th></tr></thead>";
