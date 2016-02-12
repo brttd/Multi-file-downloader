@@ -374,9 +374,9 @@
 
 
 #downloadPopup .highlight {
-	background: rgba(200, 10, 10, 0.2);
-	outline: 1px solid rgba(200, 10, 10, 0.4);
-	outline-radius: 3px;
+	background: rgba(200, 10, 10, 0.2) !important;
+	outline: 1px solid rgba(200, 10, 10, 0.4) !important;
+	outline-radius: 3px  !important;
 }
 
 #downloadPopup #popupHelpDialog {
