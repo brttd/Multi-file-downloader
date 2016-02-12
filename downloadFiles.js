@@ -45,62 +45,6 @@ if (window.injectedDownloader ) {
 								children: [
 									{
 										tag: "label",
-										htmlFor: "extensionFilter",
-										textContent: "Filter By Extension Types:"
-									},
-									{
-										tag: "div",
-										className: "filterBox",
-										children: [
-											{
-												tag: "input",
-												type: "checkbox",
-												id: "blackListExtensions"
-											},
-											{
-												tag: "label",
-												htmlFor: "blackListExtensions",
-												textContent: "Blacklist",
-												children: [
-													{
-														tag: "div",
-														className: "switch",
-														children: [
-															{
-																tag: "div",
-																className: "button"
-															}
-														]
-													}
-												]
-											},
-											{
-												tag: "br"
-											},
-											{
-												tag: "input",
-												type: "text",
-												spellcheck: "false",
-												id: "extensionFilter",
-												className: "text",
-												value: "",
-												placeholder: "file types"
-											},
-											{
-												tag: "button",
-												id: "updateFileList",
-												textContent: "#"
-											}
-										]
-									}
-								]
-							},
-							{
-								tag: "div",
-								className: "filterSection",
-								children: [
-									{
-										tag: "label",
 										htmlFor: "nameFilter",
 										textContent: "Filter By File Name:"
 									},
@@ -145,6 +89,62 @@ if (window.injectedDownloader ) {
 											{
 												tag: "button",
 												id: "updateFileList2",
+												textContent: "#"
+											}
+										]
+									}
+								]
+							},
+							{
+								tag: "div",
+								className: "filterSection",
+								children: [
+									{
+										tag: "label",
+										htmlFor: "extensionFilter",
+										textContent: "Filter By Extension Types:"
+									},
+									{
+										tag: "div",
+										className: "filterBox",
+										children: [
+											{
+												tag: "input",
+												type: "checkbox",
+												id: "blackListExtensions"
+											},
+											{
+												tag: "label",
+												htmlFor: "blackListExtensions",
+												textContent: "Blacklist",
+												children: [
+													{
+														tag: "div",
+														className: "switch",
+														children: [
+															{
+																tag: "div",
+																className: "button"
+															}
+														]
+													}
+												]
+											},
+											{
+												tag: "br"
+											},
+											{
+												tag: "input",
+												type: "text",
+												spellcheck: "false",
+												id: "extensionFilter",
+												className: "text",
+												value: "",
+												placeholder: "file types"
+											},
+											{
+												tag: "button",
+												id: "updateFileList",
 												textContent: "#"
 											}
 										]
@@ -270,12 +270,12 @@ if (window.injectedDownloader ) {
 				The table also contains the domain from which the file is from (a website can link to files from other websites), a direct link to the file, the file type (extension), and size (Occasionally the file size will not be available).<br>\
 				To download all of the listed files, press the \"Download All!\" button.<br>\
 				If you would like to have a notification appear when all of the files have finished downloading, click the \"Notify when finished\" button to toggle it on/off. When green, a notification will appear.",
-				"This allows you to filter the files by their extension type.<br>\
-				Enter the file types (.mp3, .pdf, for example) in the text box, seperated by commas.<br>\
-				Only files of the specified types will be searched for.<br>\
-				If you want to exclude certain file types, you can enable the \"Blacklist\" option.<br>\
-				If the \"Blacklist\" option is green, all file types apart from those specified will be searched for.<br>\
-				To update the list of files to be filtered according to the extension type, press the refresh button on the right of the extension type box (note, updating the list will re-add any files which were previously removed).",
+				"This allows you to filter the files by their name, or extension type.<br>\
+				Enter file names (or a part of a file name), and file types (.mp3, .pdf, for example) in the respective text boxs. Seperate multiple options with commas.<br>\
+				Only files with names and file types that match the given ones will be found.<br>\
+				If you want to exclude certain file names, or types, you can enable the \"Blacklist\" option.<br>\
+				If the \"Blacklist\" option is green, all file names and types apart from those specified will be searched for.<br>\
+				To update the list of files, press the refresh button on the right of the extension type box (note, updating the list will re-add any files which were previously removed).",
 				"Downloaded files are saved to the default Chrome downloads folder, normally User/Downloads.<br>\
 				If you would like to have the files placed in a sub folder within the downloads folder, enter the name of the folder in the \"Folder:\" text box.<br>\
 				You can enter multiple sub folders, seperated by a \"/\" character.<br>\
