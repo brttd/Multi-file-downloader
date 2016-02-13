@@ -471,7 +471,7 @@ if (window.injectedDownloader ) {
 		var extensions = document.getElementById("extensionFilter").value.split(",");
 		var validExtensions = [];
 		for (var i = 0; i < extensions.length; i++) {
-			extensions[i] = extensions[i].trim().replace(/\./gi, '');
+			extensions[i] = extensions[i].trim().toLowerCase().replace(/\./gi, '');
 			if (extensions[i].length > 0) {
 				validExtensions.push(extensions[i]);
 			}
@@ -598,7 +598,7 @@ if (window.injectedDownloader ) {
 						//if it is, then only accept it if web links are included
 						if (!isWebLink(extension[1]) || includeWebsiteLinks) {
 							//then check if it is in the extension filter
-							var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
+							var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension[1].toLowerCase()) == -1) : (validExtensions.indexOf(extension[1].toLowerCase()) != -1);
 							//and if it it is in the name filter
 							var nameCheck = validName(links[i].href, validNames, blacklistNames);
 							//if it satisfies both, then add it to the list
@@ -625,7 +625,7 @@ if (window.injectedDownloader ) {
 				if (urls.indexOf(images[i].src) == -1) {
 					var extension = images[i].src.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 					if (extension) {
-						var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
+						var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
 						var nameCheck = validName(images[i].src, validNames, blacklistNames);
 						if (extensionCheck && nameCheck) {
 							urls.push(images[i].src);
