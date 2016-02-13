@@ -6,6 +6,43 @@ if (window.injectedDownloader ) {
 	//injected script for the first time
 	window.injectedDownloader = true;
 	
+	var webFileTypes = [
+		"asp",
+		"aspx",
+		"axd",
+		"asx",
+		"asmx",
+		"ashx",
+		"css",
+		"cfm",
+		"yaws",
+		"swf",
+		"html",
+		"htm",
+		"xhtml",
+		"jhtml",
+		"jsp",
+		"jspx",
+		"wss",
+		"do",
+		"action",
+		"js",
+		"pl",
+		"php",
+		"php5",
+		"php4",
+		"php3",
+		"phtml",
+		"py",
+		"rb",
+		"rhtml",
+		"xml",
+		"rss",
+		"svg",
+		"cgi",
+		"dll"
+	];
+	
 	document.body.appendChild(createElementFromObject({
 		tag: "div",
 		id: "downloadPopup",
@@ -22,12 +59,14 @@ if (window.injectedDownloader ) {
 					{
 						tag: "div",
 						id: "popupDisplayHelp",
-						textContent: "?"
+						textContent: "?",
+						title: "Display the help dialog."
 					},
 					{
 						tag: "div",
 						id: "popupClose",
-						textContent: "x"
+						textContent: "x",
+						title: "Close the popup."
 					}
 				]
 			},
@@ -46,7 +85,8 @@ if (window.injectedDownloader ) {
 									{
 										tag: "label",
 										htmlFor: "nameFilter",
-										textContent: "Filter By File Name:"
+										textContent: "Filter By File Name:",
+										title: "Options for filtering files by their name."
 									},
 									{
 										tag: "div",
@@ -55,12 +95,13 @@ if (window.injectedDownloader ) {
 											{
 												tag: "input",
 												type: "checkbox",
-												id: "blackListNames"
+												id: "blackListNames",
 											},
 											{
 												tag: "label",
 												htmlFor: "blackListNames",
 												textContent: "Blacklist",
+												title: "Toggle between whitelisting, or blacklisting the names. When green, all specified names will be blacklisted, making only files which do not have that name appear.",
 												children: [
 													{
 														tag: "div",
@@ -84,12 +125,8 @@ if (window.injectedDownloader ) {
 												id: "nameFilter",
 												className: "text",
 												value: "",
-												placeholder: "file names"
-											},
-											{
-												tag: "button",
-												id: "updateFileList2",
-												textContent: "#"
+												placeholder: "file names",
+												title: "A list of names, or parts of names, seperated by commas."
 											}
 										]
 									}
@@ -102,7 +139,8 @@ if (window.injectedDownloader ) {
 									{
 										tag: "label",
 										htmlFor: "extensionFilter",
-										textContent: "Filter By Extension Types:"
+										textContent: "Filter By Extension Types:",
+										title: "Options for filtering files by their extension (file type)."
 									},
 									{
 										tag: "div",
@@ -117,6 +155,7 @@ if (window.injectedDownloader ) {
 												tag: "label",
 												htmlFor: "blackListExtensions",
 												textContent: "Blacklist",
+												title: "Toggle between whitelisting, or blacklisting the extensions. When green, all specified extension types will be blacklisted, making only files which do not have that extension appear.",
 												children: [
 													{
 														tag: "div",
@@ -140,12 +179,66 @@ if (window.injectedDownloader ) {
 												id: "extensionFilter",
 												className: "text",
 												value: "",
-												placeholder: "file types"
-											},
+												placeholder: "file types",
+												title: "A list of extensions (file types), seperated by commas."
+											}
+										]
+									}
+								]
+							},
+							{
+								tag: "br"
+							},
+							{
+								tag: "div",
+								className: "filterSection",
+								children: [
+									{
+										tag: "input",
+										type: "checkbox",
+										id: "includeImages"
+									},
+									{
+										tag: "label",
+										htmlFor: "includeImages",
+										textContent: "Include Visible Images",
+										title: "Toggle between excluding, or including visible images. When green, images which appear on the page (aswell as those linked to) will be listed as files to be downloaded.",
+										children: [
 											{
-												tag: "button",
-												id: "updateFileList",
-												textContent: "#"
+												tag: "div",
+												className: "switch",
+												children: [
+													{
+														tag: "div",
+														className: "button"
+													}
+												]
+											}
+										]
+									},
+									{
+										tag: "br"
+									},
+									{
+										tag: "input",
+										type: "checkbox",
+										id: "includeWebsiteLinks"
+									},
+									{
+										tag: "label",
+										htmlFor: "includeWebsiteLinks",
+										textContent: "Include Website Links",
+										title: "Toggle between excluding, or including website links. When green, links to website pages/forms will be listed as files to be downloaded. When off, files of types: .html, .php, .asp, etc will be excluded from the file list.",
+										children: [
+											{
+												tag: "div",
+												className: "switch",
+												children: [
+													{
+														tag: "div",
+														className: "button"
+													}
+												]
 											}
 										]
 									}
@@ -160,14 +253,16 @@ if (window.injectedDownloader ) {
 							{
 								tag: "label",
 								htmlFor: "folderName",
-								textContent: "Folder:"
+								textContent: "Folder:",
+								title: "A subdirectory in the chrome downloads folder for files to be placed in."
 							},
 							{
 								tag: "input",
 								type: "text",
 								spellcheck: "false",
 								id: "folderName",
-								className: "text"
+								className: "text",
+								title: "A subdirectory in the chrome downloads folder for files to be placed in."
 							}
 						]
 					},
@@ -184,7 +279,8 @@ if (window.injectedDownloader ) {
 								tag: "label",
 								htmlFor: "notifyOnFinish",
 								id: "notifyOnFinishLabel",
-								textContent: "Notify when finished",
+								textContent: "Notify When Finished",
+								title: "Toggle a notification on/off. When green, a popup notification will appear after all files have been downloaded.",
 								children: [
 									{
 										tag: "div",
@@ -199,9 +295,19 @@ if (window.injectedDownloader ) {
 								]
 							},
 							{
+								tag: "br"
+							},
+							{
 								tag: "button",
 								id: "downloadAllFiles",
-								textContent: "Download all!"
+								textContent: "Download All!",
+								title: "Download all files in the list."
+							},
+							{
+								tag: "button",
+								id: "updateFileList",
+								textContent: "Update List",
+								title: "Update the list of files. All files which fit the criteria set by the filters will be displayed, regardless of wether you previously removed them or not."
 							},
 							{
 								tag: "table",
@@ -218,9 +324,8 @@ if (window.injectedDownloader ) {
 		]
 	}));
 	
-	//the refesh button needs it's icon
-	document.getElementById("updateFileList").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
-	document.getElementById("updateFileList2").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
+	//the refesh button needs it's icon (no longer)
+	//document.getElementById("updateFileList").style = "background-image: url(" + chrome.extension.getURL("refreshIcon.png") + ");";
 	
 	updateList([], true, [], true);
 	
@@ -251,7 +356,7 @@ if (window.injectedDownloader ) {
 					{
 						tag: "button",
 						id: "popupHelpDialogNextButton",
-						textContent: "next"
+						textContent: "Next"
 					}
 				]
 			}));
@@ -259,29 +364,38 @@ if (window.injectedDownloader ) {
 			var helpElements = [
 				popup.children[2],
 				popup.children[0],
+				popup.children[0].children[3],
 				popup.children[1],
 				document.getElementById("popupControls")
 			];
 			
 			var helpText = [
-				"This is the area controls the actual downloads<br>\
-				The table at the bottom displays all the files which have been found.<br>\
-				Files can be removed by clicking the \"x\" button on the left.<br>\
-				The table also contains the domain from which the file is from (a website can link to files from other websites), a direct link to the file, the file type (extension), and size (Occasionally the file size will not be available).<br>\
-				To download all of the listed files, press the \"Download All!\" button.<br>\
-				If you would like to have a notification appear when all of the files have finished downloading, click the \"Notify when finished\" button to toggle it on/off. When green, a notification will appear.",
-				"This allows you to filter the files by their name, or extension type.<br>\
-				Enter file names (or a part of a file name), and file types (.mp3, .pdf, for example) in the respective text boxs. Seperate multiple options with commas.<br>\
-				Only files with names and file types that match the given ones will be found.<br>\
-				If you want to exclude certain file names, or types, you can enable the \"Blacklist\" option.<br>\
-				If the \"Blacklist\" option is green, all file names and types apart from those specified will be searched for.<br>\
-				To update the list of files, press the refresh button on the right of the extension type box (note, updating the list will re-add any files which were previously removed).",
-				"Downloaded files are saved to the default Chrome downloads folder, normally User/Downloads.<br>\
-				If you would like to have the files placed in a sub folder within the downloads folder, enter the name of the folder in the \"Folder:\" text box.<br>\
-				You can enter multiple sub folders, seperated by a \"/\" character.<br>\
-				If the folder does not exist, it will be created.",
-				"To close the popup, click the \"x\" button.<br>\
-				If you would like to view this help again, click the \"?\" button."
+				"This area controls, and displays the files to be downloaded.<br>\
+				In the table at the bottom, information about each file is displayed, it's domain (site it is hosted on), file name, file type, and size (occasionally this will not be accessible).<br>\
+				To remove a file from the list (meaning it won't be downloaded when the download button is pressed), click the \"x\" button on the left.<br>\
+				To download all the files listed, press the \"Download All\" button.<br>\
+				To update the list after changing a filter, press the \"Update List\" button (note, this will cause all files previously removed to be added back, if they still fit the criteria).<br>\
+				If you would like to know when the files have finished downloading, toggle the \"Notify When Finished\" option. When green, this will make a popup notification appear when all the files have downloaded.",
+				"If you would like to narrow down the file selection by name, or type, you can do so.<br>\
+				The file name filter will cause files to be choosen only if their name contains the text listed (note, the file does not have to have excatly the same name as one listed, but only has to contain the text (for example, \"2006-05-03-holiday\" would satisfy the filter \"2006\")).<br>\
+				To invert the behavior of this filter, and cause only files which <b>do not</b> contain the text to be listed, enable the \"Blacklist\" option.<br>\
+				Multiple names can be specified, seperated by commas.<br>\
+				Aswell as filtering the files by their name, you can also filter by their extension (file type).<br>\
+				As with the file name filter, enter a list of file types, seperated by commas. Any files which are of that type will be listed. The \"Blacklist\" option has the same function, when enabled causing only files with types not specified to be listed.<br>\
+				A file will only be listed if it fits both of these filters.<br>\
+				To not filter by name, or file type, leave the respective text boxs blank.",
+				"By default, visible images, and website links are not listed.<br>\
+				To include them in the file list, toggle the respective option.<br>\
+				When green, the \"Include Visible Images\" option will add all images which are displayed on the page, not just images linked.<br>\
+				When green, the \"Include Website Links\" option will add include links to files which are commonly used for websites, such as .html, .php, .asp, .js, .xml, etc.<br>\
+				Note, if the \"Include Website Links\" option is disabled, even if the file extension filter lists one of the file types, files of that type will not appear.<br>\
+				For most sites, both of these options should be disabled, since they can add unwanted files to the list. The \"Include Visible Images\" option should be enabled if being used on a website such as Instagram.",
+				"If you would like the files you have selected to download to be placed in a subfolder of the downloads directory, type in a folder name here.<br>\
+				Files are downloaded to the chrome default downloads folder, which is normally \"C:/Users/USER/downloads\".<br>\
+				If you enter a folder name (it does not have to be an already existing folder), the files will be placed within that folder in the downloads folder.<br>\
+				Multiple subdirectorys can be specified, seperating the subsequent folders with a \"/\".",
+				"To view this help again, click the \"?\" button, and to close the popup, click the \"x\" button.<br>\
+				If you encounter an error whilst using this extension, please leave a comment on this extensions page on the Chrome Webstore, saying what you were doing (page, filter settings), and what went wrong."
 			];
 			
 			displayNextHelp(false, helpElements[0], helpText[0]);
@@ -308,7 +422,7 @@ if (window.injectedDownloader ) {
 					displayNextHelp(helpElements[index - 1], helpElements[index], helpText[index]);
 					
 					if (index >= helpElements.length - 1) {
-						document.getElementById("popupHelpDialogNextButton").textContent = "finish";
+						document.getElementById("popupHelpDialogNextButton").textContent = "Finish";
 					}
 				}
 			});
@@ -371,30 +485,8 @@ if (window.injectedDownloader ) {
 			}
 		}
 		
-		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked);
+		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked, document.getElementById("includeImages").checked, document.getElementById("includeWebsiteLinks").checked);
 	});
-	document.getElementById("updateFileList2").addEventListener('click', function(e) {
-		var extensions = document.getElementById("extensionFilter").value.split(",");
-		var validExtensions = [];
-		for (var i = 0; i < extensions.length; i++) {
-			//check it is a valid extension type
-			extensions[i] = extensions[i].trim().replace(/\./gi, '');
-			if (extensions[i].length > 0) {
-				validExtensions.push(extensions[i]);
-			}
-		}
-		var names = document.getElementById("nameFilter").value.split(",");
-		var validNames = [];
-		for (var i = 0; i < names.length; i++) {
-			names[i] = names[i].trim().toLowerCase();
-			if (names[i].length > 0) {
-				validNames.push(names[i]);
-			}
-		}
-		
-		updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked);
-	});
-	
 	
 	//enabling moving of popup
 	window.popupPosition = [10, 10];
@@ -482,7 +574,16 @@ if (window.injectedDownloader ) {
 		}
 	}
 	
-	function getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames) {
+	function isWebLink(url) {
+		for (var i = 0; i < webFileTypes.length; i++) {
+			if (url.toLowerCase().indexOf(webFileTypes[i]) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	function getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks) {
 		var links = document.getElementsByTagName("a");
 		var urls = [];
 		for (var i = 0; i < links.length; i++) {
@@ -492,13 +593,18 @@ if (window.injectedDownloader ) {
 					var extension = links[i].href.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 					//check that it has an extension
 					if (extension) {
-						//check that the extension is on which is allowed
-						//(if blacklistExtensions is true, only allow extensions which are not in the list,
-						//if blacklistExtensions is false, only allow extensions which are in the list)
-						var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
-						var nameCheck = validName(links[i].href, validNames, blacklistNames);
-						if (extensionCheck && nameCheck) {
-							urls.push(links[i].href);
+						//check that the extension is one which is allowed
+						//first check if it is a web link. If it is not, then it's fine
+						//if it is, then only accept it if web links are included
+						if (!isWebLink(extension[1]) || includeWebsiteLinks) {
+							//then check if it is in the extension filter
+							var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
+							//and if it it is in the name filter
+							var nameCheck = validName(links[i].href, validNames, blacklistNames);
+							//if it satisfies both, then add it to the list
+							if (extensionCheck && nameCheck) {
+								urls.push(links[i].href);
+							}
 						}
 						/*
 						if (blacklistExtensions) {
@@ -513,12 +619,27 @@ if (window.injectedDownloader ) {
 				}
 			}
 		}
+		if (includeImages) {
+			var images = document.getElementsByTagName("img");
+			for (var i = 0; i < images.length; i++) {
+				if (urls.indexOf(images[i].src) == -1) {
+					var extension = images[i].src.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
+					if (extension) {
+						var extensionCheck = blackListExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
+						var nameCheck = validName(images[i].src, validNames, blacklistNames);
+						if (extensionCheck && nameCheck) {
+							urls.push(images[i].src);
+						}
+					}
+				}
+			}
+		}
 		return urls.sort();
 	}
 
-	function updateList(validExtensions, blacklistExtensions, validNames, blacklistNames) {
+	function updateList(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks) {
 		window.urls = [];
-		window.urls = getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames);
+		window.urls = getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks);
 		//update the list
 		var list = document.getElementById('fileList');
 		list.innerHTML = "<thead><tr><th></th><th>Domain</th><th>Name</th><th>Type</th><th>Size</th></tr></thead>";
