@@ -33,15 +33,34 @@ chrome.runtime.onConnect.addListener(function(port) {
 			//get a filename based on what was sent
 			//if there was a folder, then add it to the beginning
 			//if there was a specific name, then use it instead of the original file name
-			var filename = (message.folder ? message.folder + "/" : "") + (message.filename ? message.filename : message.url.split("/").pop());
-			chrome.downloads.download({
-				url: message.url,
-				filename: filename,
-				conflictAction: filenameConflictAction,
-				saveAs: displaySaveAsDialog
-			}, function(id) {
-				toFinish.push(id);
-			});
+			if (message.noFilename) {
+				//download without specific filename
+				chrome.downloads.download({
+					url: message.url,
+					conflictAction: filenameConflictAction,
+					saveAs: displaySaveAsDialog
+				}, function(id) {
+					toFinish.push(id);
+				});
+			} else {
+				//download with specific filename
+				var filename = (message.filename ? message.filename : message.url.split("/").pop());
+				filename.replace(new RegExp(/[\\/:*?"<>|]/, 'g'), '');
+				
+				message.folder = message.folder.replace(new RegExp(/[\\:*?"<>|]/, 'g'), '');
+				
+				filename = (message.folder ? (message.folder + "/") : "") + filename;
+				
+				chrome.downloads.download({
+					url: message.url,
+					filename: filename,
+					conflictAction: filenameConflictAction,
+					saveAs: displaySaveAsDialog
+				}, function(id) {
+					toFinish.push(id);
+				});
+			}
+			
 			var tempDomain = getDomain(message.url).replace("www.", "");
 			if (domains.indexOf(tempDomain) == -1) {
 				domains.push(tempDomain);
