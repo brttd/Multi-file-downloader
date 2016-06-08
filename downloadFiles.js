@@ -251,8 +251,36 @@ if (window.injectedDownloader ) {
 						className: "section filenames",
 						children: [
 							{
+								tag: "input",
+								type: "checkbox",
+								id: "noFilename"
+							},
+							{
+								tag: "label",
+								htmlFor: "noFilename",
+								id: "noFilenameLabel",
+								textContent: "Use Default Filename",
+								title: "Use the default filename for each downloaded file. When green, the downloaded file will determine the filename. When off, the url will determine the filename. Enabling this option disables the Folder option.",
+								children: [
+									{
+										tag: "div",
+										className: "switch",
+										children: [
+											{
+												tag: "div",
+												className: "button"
+											}
+										]
+									}
+								]
+							},
+							{
+								tag: "br"
+							},
+							{
 								tag: "label",
 								htmlFor: "folderName",
+								id: "folderNameLabel",
 								textContent: "Folder:",
 								title: "A subdirectory in the chrome downloads folder for files to be placed in."
 							},
@@ -453,7 +481,8 @@ if (window.injectedDownloader ) {
 			var folder = getValidFolderName(document.getElementById("folderName").value.trim());
 			port.postMessage({
 				url: window.urls[i],
-				folder: folder
+				folder: folder,
+				noFilename: document.getElementById('noFilename').checked
 			});
 		}
 	});
