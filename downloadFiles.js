@@ -101,7 +101,7 @@ if (window.injectedDownloader ) {
 												tag: "label",
 												htmlFor: "blackListNames",
 												textContent: "Blacklist",
-												title: "Toggle between whitelisting, or blacklisting the names. When green, all specified names will be blacklisted, making only files which do not have that name appear.",
+												title: "Toggle between whitelisting, or blacklisting the names. When enabled, all specified names will be blacklisted, making only files which do not have that name appear.",
 												children: [
 													{
 														tag: "div",
@@ -155,7 +155,7 @@ if (window.injectedDownloader ) {
 												tag: "label",
 												htmlFor: "blackListExtensions",
 												textContent: "Blacklist",
-												title: "Toggle between whitelisting, or blacklisting the extensions. When green, all specified extension types will be blacklisted, making only files which do not have that extension appear.",
+												title: "Toggle between whitelisting, or blacklisting the extensions. When enabled, all specified extension types will be blacklisted, making only files which do not have that extension appear.",
 												children: [
 													{
 														tag: "div",
@@ -202,7 +202,7 @@ if (window.injectedDownloader ) {
 										tag: "label",
 										htmlFor: "includeImages",
 										textContent: "Include Visible Images",
-										title: "Toggle between excluding, or including visible images. When green, images which appear on the page (aswell as those linked to) will be listed as files to be downloaded.",
+										title: "Toggle between excluding, or including visible images. When enabled, images which appear on the page (aswell as those linked to) will be listed as files to be downloaded.",
 										children: [
 											{
 												tag: "div",
@@ -228,7 +228,7 @@ if (window.injectedDownloader ) {
 										tag: "label",
 										htmlFor: "includeWebsiteLinks",
 										textContent: "Include Website Links",
-										title: "Toggle between excluding, or including website links. When green, links to website pages/forms will be listed as files to be downloaded. When off, files of types: .html, .php, .asp, etc will be excluded from the file list.",
+										title: "Toggle between excluding, or including website links. When enabled, links to website pages/forms will be listed as files to be downloaded. When off, files of types: .html, .php, .asp, etc will be excluded from the file list.",
 										children: [
 											{
 												tag: "div",
@@ -260,7 +260,7 @@ if (window.injectedDownloader ) {
 								htmlFor: "noFilename",
 								id: "noFilenameLabel",
 								textContent: "Use Default Filename",
-								title: "Use the default filename for each downloaded file. When green, the downloaded file will determine the filename. When off, the url will determine the filename. Enabling this option disables the Folder option.",
+								title: "Use the default filename for each downloaded file. When enabled, the downloaded file will determine the filename. When off, the url will determine the filename. Enabling this option disables the Folder option.",
 								children: [
 									{
 										tag: "div",
@@ -308,7 +308,7 @@ if (window.injectedDownloader ) {
 								htmlFor: "notifyOnFinish",
 								id: "notifyOnFinishLabel",
 								textContent: "Notify When Finished",
-								title: "Toggle a notification on/off. When green, a popup notification will appear after all files have been downloaded.",
+								title: "Toggle a notification on/off. When enabled, a popup notification will appear after all files have been downloaded.",
 								children: [
 									{
 										tag: "div",
@@ -398,32 +398,40 @@ if (window.injectedDownloader ) {
 			];
 			
 			var helpText = [
-				"This area controls, and displays the files to be downloaded.<br>\
-				In the table at the bottom, information about each file is displayed, it's domain (site it is hosted on), file name, file type, and size (occasionally this will not be accessible).<br>\
-				To remove a file from the list (meaning it won't be downloaded when the download button is pressed), click the \"x\" button on the left.<br>\
+				"All information and options about downloading files are displayed here.<br>\
+				The table at the bottom includes information about all files found; It's domain (site it is hosted on), url, file type (not always correct), and size (not always accesible).<br>\
+				To remove a file from the list, click the \"x\" button on the left.<br>\
 				To download all the files listed, press the \"Download All\" button.<br>\
-				To update the list after changing a filter, press the \"Update List\" button (note, this will cause all files previously removed to be added back, if they still fit the criteria).<br>\
-				If you would like to know when the files have finished downloading, toggle the \"Notify When Finished\" option. When green, this will make a popup notification appear when all the files have downloaded.",
-				"If you would like to narrow down the file selection by name, or type, you can do so.<br>\
-				The file name filter will cause files to be choosen only if their name contains the text listed (note, the file does not have to have excatly the same name as one listed, but only has to contain the text (for example, \"2006-05-03-holiday\" would satisfy the filter \"2006\")).<br>\
-				To invert the behavior of this filter, and cause only files which <b>do not</b> contain the text to be listed, enable the \"Blacklist\" option.<br>\
-				Multiple names can be specified, seperated by commas.<br>\
-				Aswell as filtering the files by their name, you can also filter by their extension (file type).<br>\
-				As with the file name filter, enter a list of file types, seperated by commas. Any files which are of that type will be listed. The \"Blacklist\" option has the same function, when enabled causing only files with types not specified to be listed.<br>\
-				A file will only be listed if it fits both of these filters.<br>\
-				To not filter by name, or file type, leave the respective text boxs blank.",
-				"By default, visible images, and website links are not listed.<br>\
-				To include them in the file list, toggle the respective option.<br>\
-				When green, the \"Include Visible Images\" option will add all images which are displayed on the page, not just images linked.<br>\
-				When green, the \"Include Website Links\" option will add include links to files which are commonly used for websites, such as .html, .php, .asp, .js, .xml, etc.<br>\
-				Note, if the \"Include Website Links\" option is disabled, even if the file extension filter lists one of the file types, files of that type will not appear.<br>\
-				For most sites, both of these options should be disabled, since they can add unwanted files to the list. The \"Include Visible Images\" option should be enabled if being used on a website such as Instagram.",
-				"If you would like the files you have selected to download to be placed in a subfolder of the downloads directory, type in a folder name here.<br>\
-				Files are downloaded to the chrome default downloads folder, which is normally \"C:/Users/USER/downloads\".<br>\
-				If you enter a folder name (it does not have to be an already existing folder), the files will be placed within that folder in the downloads folder.<br>\
-				Multiple subdirectorys can be specified, seperating the subsequent folders with a \"/\".",
-				"To view this help again, click the \"?\" button, and to close the popup, click the \"x\" button.<br>\
-				If you encounter an error whilst using this extension, please leave a comment on this extensions page on the Chrome Webstore, saying what you were doing (page, filter settings), and what went wrong."
+				To update the list after changing an option, press the \"Update List\" button (note, this will cause all files previously removed to be added back, if they still satisfy the options).<br>\
+				If you would like to know when the files have finished downloading, toggle the \"Notify When Finished\" option. When enabled, a popup notification will appear after all the files have finished downloading.",
+				
+				"All options to filter detected files are displayed here.<br>\
+				The \"File Name\" filter will select files only if their name contains the text listed (note, the file only has to contain the text (for example, \"2006-05-03\" would satisfy the filter \"2006\")).<br>\
+				The \"Blacklist\" option will invert the filter, and only select files which <b>do not</b> contain the text.<br>\
+				Multiple options can be specified, seperated by commas.<br>\
+				In addition to filtering by name, you can also filter by extension (file type).<br>\
+				The \"Extension Type\" filter will select files only if their type is specified.<br>\
+				The \"Blacklist\" option will invert the filter, and only select files which <b>are not</b> of a specified type.<br>\
+				Multiple types can be specified, seperated by commas.<br>\
+				Files have to satisfy both of these filters to be listed.<br>\
+				Leave either option blank to disable the filter.",
+				
+				"By default visible images, and website links will not be listed.<br>\
+				When enabled, the \"Include Visible Images\" option will list images which are displayed on the page, in addition to images which are linked.<br>\
+				When enabled, the \"Include Website Links\" option will list links to files which are commonly used for websites, such as .html, .php, .asp, .js, .xml, etc.<br>\
+				Note, the \"Include Website Links\" overrides the \"Extension type\" filter. If the \"Include Website Links\" option is disabled, no files of a website file type will be listed, even if they are included in the \"Extension type\" filter.<br>\
+				For most sites both of these options should be disabled, since they can add unwanted files to the list. The \"Include Visible Images\" option should be enabled if being used on a website such as Instagram.",
+				
+				"By default downloaded files will be named according to their url.<br>\
+				The \"Use Default Filename\" option will disable this, and cause files to have the original name, regardless of the url they were downloaded from.<br>\
+				In most cases this option should not be required, as the url will include the filename. If files have an incorrect or meaningless name, enabling this option may fix it.<br>\
+				The \"Folder\" option will place all downloaded files into the specified folder, inside of the default downloads directory.<br>\
+				If left blank, files will be downloaded into the chrome downloads folder, which is normally \"C:/Users/USER/downloads\".<br>\
+				The folder does not need to already exist, and multiple sub folders (seperated with \"/\") can be specified.<br>\
+				If \"Use Default Filename\" option is enabled, you cannot choose a sub folder (this is due to the way filenames are specified).",
+				
+				"To view this help again, click the \"?\" button. To close the popup, click the \"x\" button.<br>\
+				If you encounter an error whilst using this extension, please leave a comment on the Chrome Webstore."
 			];
 			
 			displayNextHelp(false, helpElements[0], helpText[0]);
