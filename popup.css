@@ -154,7 +154,11 @@
 	opacity: 1;
 	
 	font-size: 15px;
+	font-weight: normal;
+	text-decoration: none;
 	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
 }
 #downloadPopup .filterSection {
 	display: inline-block;
@@ -199,6 +203,10 @@
 	font-size: 12px;
 	line-height: 1;
 	text-align: center;
+	font-weight: normal;
+	text-decoration: none;
+	text-transform: none;
+	letter-spacing: normal;
 	
 	color: rgb(90, 90, 90);
 	
@@ -367,7 +375,12 @@
 	transition: background 0.2s, border-color 0.2s;
 }
 #downloadPopup label .switch .button {
+	margin: 0;
+	padding: 0;
+	
 	display: block;
+	
+	font-size: 1em;
 	
 	pointer-events: all;
 	
@@ -405,6 +418,10 @@
 	left: calc(1.5em - 0.75em);
 }
 
+#noFilename:checked ~ #folderName, #noFilename:checked ~ #folderNameLabel {
+	opacity: 0.5;
+	pointer-events: none;
+}
 
 #downloadPopup .highlight {
 	background: rgba(200, 10, 10, 0.2) !important;
