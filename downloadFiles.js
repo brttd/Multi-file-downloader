@@ -7,46 +7,45 @@ if (window.injectedDownloader ) {
 window.injectedDownloader = true;
 
 var webFileTypes = [
-	".asp",
-	".aspx",
-	".axd",
-	".asx",
-	".asmx",
-	".ashx",
-	".css",
-	".cfm",
-	".yaws",
-	".swf",
-	".html",
-	".htm",
-	".xhtml",
-	".jhtml",
-	".jsp",
-	".jspx",
-	".wss",
-	".do",
-	".action",
-	".js",
-	".pl",
-	".php",
-	".php5",
-	".php4",
-	".php3",
-	".phtml",
-	".py",
-	".rb",
-	".rhtml",
-	".xml",
-	".rss",
-	".svg",
-	".cgi",
-	".dll"
+	"asp",
+	"aspx",
+	"axd",
+	"asx",
+	"asmx",
+	"ashx",
+	"css",
+	"cfm",
+	"yaws",
+	"swf",
+	"html",
+	"htm",
+	"xhtml",
+	"jhtml",
+	"jsp",
+	"jspx",
+	"wss",
+	"do",
+	"action",
+	"js",
+	"pl",
+	"php",
+	"php5",
+	"php4",
+	"php3",
+	"phtml",
+	"py",
+	"rb",
+	"rhtml",
+	"xml",
+	"rss",
+	"svg",
+	"cgi",
+	"dll"
 ];
 var port = chrome.runtime.connect({name: "download_info"});
 var helpOpen = false;
 var popupPosition = [10, 10];
 var files = [];
-updatePosition();
 
 mouseDragging = false;
 mouseOffset = [0, 0];
@@ -181,22 +180,28 @@ function displayHelp() {
 	}
 }
 
-
 function updatePosition() {
 	document.getElementById('downloadPopup').setAttribute("style",
 		"top: " + popupPosition[1] + "px;left: " + popupPosition[0] + "px;");
 }
 
-
 //url functions
+function getExtension(url) {
+	url = url.split('/').pop().match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
+	return url ? url[1].toLowerCase() : "";
+	//return url.substr((~-url.lastIndexOf(".") >>> 0) + 2).toLowerCase();
+}
+
 function isWebLink(url) {
+	var ext = getExtension(url);
 	for (var i = 0; i < webFileTypes.length; i++) {
-		if (url.toLowerCase().indexOf(webFileTypes[i]) != -1) {
+		if (ext.indexOf(webFileTypes[i]) != -1) {
 			return true;
 		}
 	}
 	return false;
 }
+
 function get_filesize(url, index, callback) {
 	var xhr = new XMLHttpRequest();
 	xhr.open("HEAD", url, true);
@@ -227,17 +232,41 @@ function getReadableFileSize(fileSizeInBytes) {
 	return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 };
 
-//file 
-function removeFile() {
-	var url = this.parentNode.children[2].children[0].href;
-	var index = files.indexOf(url);
-	if (index != -1) {
-		files.splice(index, 1);
+//file functions
+function getFileIndex(url) {
+	for (var i = 0; i < files.length; i++) {
+		if (files[i].url == url) {
+			return i;
+		}
 	}
-	this.parentNode.parentNode.removeChild(this.parentNode);
+	return -1;
 }
 
-function validName(name, validNames, blacklistNames) {
+function removeFile() {
+	var url = this.parentNode.children[2].children[0].href;
+	var index = getFileIndex(url);
+	if (index != -1) {
+		files.splice(index, 1);
+		this.parentNode.parentNode.removeChild(this.parentNode);
+	}
+}
+
+function getDomain(url) {
+	var domain = url.split("/")[(url.indexOf("://") == -1) ? 0 : 2];
+	return domain.split(":")[0];
+}
+
+function getValidFolderName(string) {
+	if (string[0] == "/" || string[0] == "\\") {
+		return getValidFolderName(string.slice(1, string.length - 1).trim());
+	} else if (string[string.length - 1] == "/" || string[string.length - 1] == "\\") {
+		return getValidFolderName(string.slice(0, string.length - 1).trim());
+	} else {
+		return string;
+	}
+}
+
+function isValidName(name, validNames, blacklistNames) {
 	if (blacklistNames) {
 		for (var i = 0; i < validNames.length; i++) {
 			if (name.toLowerCase().indexOf(validNames[i]) != -1) {
@@ -255,38 +284,41 @@ function validName(name, validNames, blacklistNames) {
 	}
 }
 
-function getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks) {
+//file search functions
+function updateFiles(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks) {
 	var links = document.getElementsByTagName("a");
-	var urls = [];
+	files = [];
 	for (var i = 0; i < links.length; i++) {
 		if (links[i].className.indexOf("IGNORE_DO_NOT_DOWNLOAD") == -1) {
 			//only allow a file to appear once
-			if (urls.indexOf(links[i].href) == -1) {
-				var extension = links[i].href.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
+			if (getFileIndex(links[i].href) == -1) {
+				var extension = getExtension(links[i].href);
 				//check that it has an extension
 				if (extension) {
 					//check that the extension is one which is allowed
 					//first check if it is a web link. If it is not, then it's fine
 					//if it is, then only accept it if web links are included
-					if (!isWebLink(extension[1]) || includeWebsiteLinks) {
+					if (!isWebLink(links[i].href) || includeWebsiteLinks) {
 						//then check if it is in the extension filter
-						var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension[1].toLowerCase()) == -1) : (validExtensions.indexOf(extension[1].toLowerCase()) != -1);
+						var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension) == -1) : (validExtensions.indexOf(extension) != -1);
 						//and if it it is in the name filter
-						var nameCheck = validName(links[i].href, validNames, blacklistNames);
+						var nameCheck = isValidName(links[i].href, validNames, blacklistNames);
 						//if it satisfies both, then add it to the list
 						if (extensionCheck && nameCheck) {
-							urls.push(links[i].href);
+							//TODO: add option to use the text of the link as the filename
+							if (false) {
+								files.push({
+									name: links[i].innerText,
+									url: links[i].href
+								});
+							} else {
+								files.push({
+									name: links[i].href.split("/").pop().split(".")[0],
+									url: links[i].href
+								})
+							}
 						}
 					}
-					/*
-					if (blacklistExtensions) {
-						if (validExtensions.indexOf(extension[1]) == -1) {
-							urls.push(links[i].href);
-						}
-					} else if (validExtensions.indexOf(extension[1]) != -1) {
-						urls.push(links[i].href);
-					}
-					*/
 				}
 			}
 		}
@@ -294,24 +326,24 @@ function getLinks(validExtensions, blacklistExtensions, validNames, blacklistNam
 	if (includeImages) {
 		var images = document.getElementsByTagName("img");
 		for (var i = 0; i < images.length; i++) {
-			if (urls.indexOf(images[i].src) == -1) {
-				var extension = images[i].src.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
+			if (files.indexOf(images[i].src) == -1) {
+				var extension = getExtension(images[i].src);
 				if (extension) {
-					var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension[1]) == -1) : (validExtensions.indexOf(extension[1]) != -1);
-					var nameCheck = validName(images[i].src, validNames, blacklistNames);
+					var extensionCheck = blacklistExtensions ? (validExtensions.indexOf(extension) == -1) : (validExtensions.indexOf(extension) != -1);
+					var nameCheck = isValidName(images[i].src, validNames, blacklistNames);
 					if (extensionCheck && nameCheck) {
-						urls.push(images[i].src);
+						files.push({
+								name: images[i].name || images[i].alt || images[i].src.split("/").pop().split(".")[0],
+								url: images[i].src
+						});
 					}
 				}
 			}
 		}
 	}
-	return urls.sort();
 }
 
 function updateList(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks) {
-	files = [];
-	files = getLinks(validExtensions, blacklistExtensions, validNames, blacklistNames, includeImages, includeWebsiteLinks);
 	//update the list
 	var list = document.getElementById('fileList');
 	list.innerHTML = "<thead><tr><th></th><th>Domain</th><th>Name</th><th>Type</th><th>Size</th></tr></thead>";
@@ -327,7 +359,7 @@ function updateList(validExtensions, blacklistExtensions, validNames, blacklistN
 				{
 					tag: "td",
 					className: "domain",
-					textContent: getDomain(files[i])
+					textContent: getDomain(files[i].url)
 				},
 				{
 					tag: "td",
@@ -336,15 +368,15 @@ function updateList(validExtensions, blacklistExtensions, validNames, blacklistN
 						{
 							tag: "a",
 							className: "IGNORE_DO_NOT_DOWNLOAD",
-							href: files[i],
-							textContent: files[i].split("/").pop().split(".")[0]
+							href: files[i].url,
+							textContent: files[i].name
 						}
 					]
 				},
 				{
 					tag: "td",
 					className: "type",
-					textContent: files[i].split(".").pop()
+					textContent: files[i].url.split(".").pop()
 				},
 				{
 					tag: "td",
@@ -353,26 +385,12 @@ function updateList(validExtensions, blacklistExtensions, validNames, blacklistN
 				}
 			]
 		}));
-		get_filesize(files[i], i, function(size, index) {
+		get_filesize(files[i].url, i, function(size, index) {
 			//(the index has to be +1 because of the headers ("domain", "name", etc)
 			list.children[index + 1].children[4].textContent = getReadableFileSize(size);
 		});
 		list.children[list.children.length - 1].children[0].addEventListener("click", removeFile);
 	}
-}
-
-function getValidFolderName(string) {
-	if (string[0] == "/" || string[0] == "\\") {
-		return getValidFolderName(string.slice(1, string.length - 1).trim());
-	} else if (string[string.length - 1] == "/" || string[string.length - 1] == "\\") {
-		return getValidFolderName(string.slice(0, string.length - 1).trim());
-	} else {
-		return string;
-	}
-}
-function getDomain(url) {
-	var domain = url.split("/")[(url.indexOf("://") == -1) ? 0 : 2];
-	return domain.split(":")[0];
 }
 
 //create popup elements
@@ -691,6 +709,8 @@ document.body.appendChild(createElementFromObject({
 	]
 }));
 
+updatePosition();
+
 port.postMessage({
 	domain: getDomain(window.location.href)
 });
@@ -708,17 +728,6 @@ document.getElementById("popupDisplayHelp").addEventListener('click', function(e
 	displayHelp();
 });
 
-document.getElementById("downloadAllFiles").addEventListener('click', function(e) {
-	var folder = getValidFolderName(document.getElementById("folderName").value.trim());
-	for (var i = 0; i < files.length; i++) {
-		port.postMessage({
-			url: files[i],
-			folder: folder,
-			noFilename: document.getElementById('noFilename').checked
-		});
-	}
-});
-
 document.getElementById("notifyOnFinishLabel").addEventListener('click', function(e) {
 	setTimeout(function() {
 		//unless there is a delay, the .checked value will be incorrect
@@ -726,6 +735,17 @@ document.getElementById("notifyOnFinishLabel").addEventListener('click', functio
 			notifyOnFinish: document.getElementById("notifyOnFinish").checked
 		});
 	}, 5);
+});
+
+document.getElementById("downloadAllFiles").addEventListener('click', function(e) {
+	var folder = getValidFolderName(document.getElementById("folderName").value.trim());
+	for (var i = 0; i < files.length; i++) {
+		port.postMessage({
+			url: files[i].url,
+			folder: folder,
+			noFilename: document.getElementById('noFilename').checked
+		});
+	}
 });
 
 document.getElementById("updateFileList").addEventListener('click', function(e) {
@@ -746,7 +766,15 @@ document.getElementById("updateFileList").addEventListener('click', function(e) 
 		}
 	}
 	
-	updateList(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked, document.getElementById("includeImages").checked, document.getElementById("includeWebsiteLinks").checked);
+	updateFiles(validExtensions, (validExtensions.length == 0) ? true : document.getElementById("blackListExtensions").checked, validNames, (validNames.length == 0) ? true : document.getElementById("blackListNames").checked, document.getElementById("includeImages").checked, document.getElementById("includeWebsiteLinks").checked);
+	updateList();
+});
+
+document.getElementById("sortFileList").addEventListener('click', function(e) {
+	files.sort(function(a, b) {
+		return a.name.toLowerCase() > b.name.toLowerCase()
+	});
+	updateList();
 });
 
 document.getElementById('downloadPopup').children[0].addEventListener('mousedown', function(e) {
