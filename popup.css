@@ -421,6 +421,8 @@
 #noFilename:checked ~ #folderName, #noFilename:checked ~ #folderNameLabel {
 	opacity: 0.5;
 	pointer-events: none;
+
+	display: none;
 }
 
 #downloadPopup .highlight {
