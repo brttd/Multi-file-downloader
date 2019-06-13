@@ -313,17 +313,30 @@ function downloadFile(file) {
         updateList()
     }
     function onOptionChange(optionName) {
-        console.log(optionName, this.value)
         options[optionName] = this.value
 
         updateList()
+    }
+
+    function saveBoolOptionToStorage(optionName) {
+        let obj = {}
+        obj[optionName] = this.checked
+
+        chrome.storage.sync.set(obj)
+    }
+    function saveOptionToStorage(optionName) {
+        let obj = {}
+        obj[optionName] = this.value
+
+        chrome.storage.sync.set(obj)
     }
 
     function getOptionElem(
         optionName,
         optionType,
         optionLabel,
-        interactCallback
+        interactCallback,
+        useStorage
     ) {
         if (optionType === 'button') {
             let elem = document.createElement('button')
@@ -357,7 +370,7 @@ function downloadFile(file) {
 
             elem.className = 'checkbox'
 
-            if (interactCallback) {
+            if (typeof interactCallback === 'function') {
                 elem.firstChild.addEventListener(
                     'change',
                     interactCallback.bind(elem.firstChild)
@@ -368,8 +381,24 @@ function downloadFile(file) {
                     onBoolOptionChange.bind(elem.firstChild, optionName)
                 )
             }
+
+            if (useStorage) {
+                let keyName = 'OPTION_' + optionName
+
+                chrome.storage.sync.get(keyName, function(result) {
+                    console.log(keyName, result[keyName])
+
+                    elem.firstChild.checked = result[keyName]
+                    onBoolOptionChange.call(elem.firstChild, optionName)
+                })
+
+                elem.firstChild.addEventListener(
+                    'change',
+                    saveBoolOptionToStorage.bind(elem.firstChild, keyName)
+                )
+            }
         } else {
-            if (interactCallback) {
+            if (typeof interactCallback === 'function') {
                 elem.lastChild.addEventListener(
                     'input',
                     interactCallback.bind(elem.lastChild)
@@ -380,16 +409,38 @@ function downloadFile(file) {
                     onOptionChange.bind(elem.lastChild, optionName)
                 )
             }
+
+            if (useStorage) {
+                let keyName = 'OPTION_' + optionName
+
+                chrome.storage.sync.get(keyName, function(result) {
+                    console.log(keyName, result[keyName])
+
+                    elem.lastChild.value = result[keyName]
+                    onOptionChange.call(elem.lastChild, optionName)
+                })
+
+                elem.lastChild.addEventListener(
+                    'input',
+                    saveOptionToStorage.bind(elem.lastChild, keyName)
+                )
+            }
         }
 
         return elem
     }
 
     elements.controls.appendChild(
-        getOptionElem('include_media', 'checkbox', 'Media')
+        getOptionElem('include_media', 'checkbox', 'Media', null, true)
     )
     elements.controls.appendChild(
-        getOptionElem('include_website_links', 'checkbox', 'Web links')
+        getOptionElem(
+            'include_website_links',
+            'checkbox',
+            'Web links',
+            null,
+            true
+        )
     )
     elements.controls.appendChild(document.createElement('hr'))
 
@@ -450,26 +501,42 @@ function downloadFile(file) {
     elements.controls.appendChild(document.createElement('hr'))
 
     elements.controls.appendChild(
-        getOptionElem('download_subdirectory', 'text', 'Sub-folder', function(
-            event
-        ) {
-            if (this.value.includes('.')) {
-                this.value = this.value.replace(dotRegex, '')
-            }
+        getOptionElem(
+            'download_subdirectory',
+            'text',
+            'Sub-folder',
+            function(event) {
+                if (this.value.includes('.')) {
+                    this.value = this.value.replace(dotRegex, '')
+                }
 
-            if (this.value.match(invalidPathRegex)) {
-                this.value = this.value.replace(invalidPathRegex, '')
-            }
+                if (this.value.match(invalidPathRegex)) {
+                    this.value = this.value.replace(invalidPathRegex, '')
+                }
 
-            options.download_subdirectory = this.value
-        })
+                options.download_subdirectory = this.value
+            },
+            true
+        )
     )
     elements.controls.appendChild(document.createElement('hr'))
     elements.controls.appendChild(
-        getOptionElem('download_overwrite', 'checkbox', 'Overwrite existing')
+        getOptionElem(
+            'download_overwrite',
+            'checkbox',
+            'Overwrite existing',
+            null,
+            true
+        )
     )
     elements.controls.appendChild(
-        getOptionElem('download_custom_name', 'checkbox', 'Use custom name')
+        getOptionElem(
+            'download_custom_name',
+            'checkbox',
+            'Use custom name',
+            null,
+            true
+        )
     )
 
     elements.actions.appendChild(
