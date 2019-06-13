@@ -693,10 +693,6 @@ function saveFilterOptions() {
             true
         )
     )
-    elements.controls.appendChild(document.createElement('p'))
-    elements.controls.appendChild(
-        getOptionElem('use_link_text', 'checkbox', 'Scan link text', null, true)
-    )
 
     elements.actions.appendChild(
         getOptionElem('', 'button', 'Enable All', () => {
@@ -724,6 +720,10 @@ function saveFilterOptions() {
         getOptionElem('', 'button', 'Rescan Page', () => {
             scanPage()
         })
+    )
+
+    elements.actions.appendChild(
+        getOptionElem('use_link_text', 'checkbox', 'Scan link text', null, true)
     )
 
     elements.actions.appendChild(document.createElement('p'))

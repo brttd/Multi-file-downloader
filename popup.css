@@ -148,6 +148,7 @@ body > div {
 #controls div.checkbox,
 #actions div.checkbox {
   flex: 0 0 auto;
+  align-self: center;
 }
 #controls div.checkbox input,
 #controls div.checkbox label,
