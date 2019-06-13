@@ -14,7 +14,9 @@ function download_file(file) {
                     id: id,
 
                     name: file.name || null,
-                    subdirectory: file.subdirectory || null
+                    subdirectory: file.subdirectory || null,
+
+                    conflictAction: file.conflictAction || 'uniquify'
                 })
                 download_ids.push(id)
             }
@@ -48,6 +50,7 @@ chrome.downloads.onDeterminingFilename.addListener((downloadItem, suggest) => {
     }
 
     suggest({
-        filename: newFilename
+        filename: newFilename,
+        conflictAction: relevantDownload.conflictAction
     })
 })
