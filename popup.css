@@ -231,20 +231,23 @@ ul li textarea {
 ul li span.domain,
 ul li textarea.domain {
   width: 15ch;
+  min-width: 10ch;
 }
 ul li span.url,
 ul li textarea.url {
-  width: 30ch;
+  width: 20ch;
+  min-width: 15ch;
 }
 ul li span.name,
 ul li textarea.name {
   width: 15ch;
+  min-width: 10ch;
   text-align: right;
 }
 ul li span.type,
 ul li textarea.type {
   min-width: 5ch;
-  width: 6ch;
+  width: 10ch;
 }
 ul li span.url, ul li span.type,
 ul li textarea.url,
