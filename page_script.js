@@ -117,7 +117,7 @@ if (window._injected_downloader) {
                 if (files[i].link_text) {
                     if (!getFileExt(files[i].link_text)) {
                         files[i].name =
-                            files[i].link_text + getFileExt(files[i].name)
+                            files[i].link_text + '.' + getFileExt(files[i].name)
                     } else {
                         files[i].name = files[i].link_text
                     }
