@@ -545,7 +545,7 @@ function downloadFile(file) {
         getOptionElem(
             'download_select_location',
             'checkbox',
-            'Show Save Dialog',
+            'Show save dialog',
             null,
             true
         )
