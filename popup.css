@@ -55,7 +55,7 @@ body > div {
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
-  padding: 6px;
+  padding: 2px 4px;
 }
 #controls .message:empty,
 #actions .message:empty {
@@ -69,11 +69,16 @@ body > div {
   margin: 0;
   border: none;
 }
+#controls p,
+#actions p {
+  flex: 1 1 auto;
+  margin: 0;
+}
 #controls button,
 #actions button {
   flex: 0 0 auto;
   align-self: center;
-  margin: 3px;
+  margin: 2px;
   padding: 6px 12px;
   color: black;
   border: 1px solid #b9b8b8;
@@ -104,28 +109,28 @@ body > div {
 #controls div,
 #actions div {
   flex: 1 1 auto;
-  align-self: center;
+  align-self: flex-start;
   min-width: fit-content;
   max-width: 35ch;
-  margin: 3px;
-  padding: 3px;
+  margin: 0 2px;
+  padding: 2px;
 }
 #controls div.multi,
 #actions div.multi {
-  padding: 3px 0;
+  padding: 2px 0;
 }
 #controls div.multi div,
 #actions div.multi div {
   margin: 0;
-  padding: 0 3px;
+  padding: 0 2px;
 }
 #controls div.multi div + div,
 #actions div.multi div + div {
-  padding-top: 3px;
+  padding-top: 2px;
 }
 #controls div.regex,
 #actions div.regex {
-  max-width: 80ch;
+  max-width: 70ch;
 }
 #controls div input,
 #controls div label,
@@ -156,7 +161,7 @@ body > div {
 #controls div.checkbox input,
 #actions div.checkbox input {
   margin-right: 3px;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 #table {
@@ -235,7 +240,7 @@ ul li textarea {
 }
 ul li span.domain,
 ul li textarea.domain {
-  width: 15ch;
+  width: 18ch;
   min-width: 10ch;
 }
 ul li span.url,
@@ -245,14 +250,15 @@ ul li textarea.url {
 }
 ul li span.name,
 ul li textarea.name {
-  width: 15ch;
+  width: 18ch;
   min-width: 10ch;
   text-align: right;
 }
 ul li span.type,
 ul li textarea.type {
   min-width: 5ch;
-  width: 10ch;
+  width: 7ch;
+  max-width: 10ch;
 }
 ul li span.url, ul li span.type,
 ul li textarea.url,
