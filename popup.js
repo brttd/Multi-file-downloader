@@ -358,7 +358,7 @@ function updateFilterOptions(filters) {
             filters.name_exclude
 
         document.getElementById('OPTION_Exclude_by name').checked = true
-        document.getElementById('OPTION_filter_name_exclude').disabled = false
+        document.getElementById('OPTION_filter_name_exclude').style.display = ''
 
         onOptionChange.call(
             document.getElementById('OPTION_filter_name_exclude'),
@@ -378,7 +378,7 @@ function updateFilterOptions(filters) {
             filters.ext_exclude
 
         document.getElementById('OPTION_Exclude_by type').checked = true
-        document.getElementById('OPTION_filter_ext_exclude').disabled = false
+        document.getElementById('OPTION_filter_ext_exclude').style.display = ''
 
         onOptionChange.call(
             document.getElementById('OPTION_filter_ext_exclude'),
@@ -591,11 +591,11 @@ function saveFilterOptions() {
             let elem = document.getElementById('OPTION_filter_name_exclude')
 
             if (this.checked) {
-                elem.disabled = false
+                elem.style.display = ''
 
                 options.filter_name_exclude = elem.value
             } else {
-                elem.disabled = true
+                elem.style.display = 'none'
 
                 options.filter_name_exclude = ''
             }
@@ -611,7 +611,7 @@ function saveFilterOptions() {
     elements.controls.lastChild.appendChild(
         getOptionElem('filter_name_exclude', 'text', '')
     )
-    document.getElementById('OPTION_filter_name_exclude').disabled = true
+    document.getElementById('OPTION_filter_name_exclude').style.display = 'none'
 
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
@@ -623,11 +623,11 @@ function saveFilterOptions() {
             let elem = document.getElementById('OPTION_filter_ext_exclude')
 
             if (this.checked) {
-                elem.disabled = false
+                elem.style.display = ''
 
                 options.filter_ext_exclude = elem.value
             } else {
-                elem.disabled = true
+                elem.style.display = 'none'
 
                 options.filter_ext_exclude = ''
             }
@@ -643,7 +643,7 @@ function saveFilterOptions() {
     elements.controls.lastChild.appendChild(
         getOptionElem('filter_ext_exclude', 'text', '')
     )
-    document.getElementById('OPTION_filter_ext_exclude').disabled = true
+    document.getElementById('OPTION_filter_ext_exclude').style.display = 'none'
 
     elements.controls.appendChild(document.createElement('hr'))
 
