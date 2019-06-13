@@ -335,6 +335,17 @@ function downloadFile(file) {
 
 let lastSaveTime = 0
 function updateFilterOptions(filters) {
+    if (
+        filters.regex &&
+        document.querySelector('.regex').style.display === ''
+    ) {
+        document.getElementById('OPTION_filter_regex').value = filters.regex
+        onOptionChange.call(
+            document.getElementById('OPTION_filter_regex'),
+            'filter_regex'
+        )
+    }
+
     if (filters.name) {
         document.getElementById('OPTION_filter_name').value = filters.name
         onOptionChange.call(
@@ -393,6 +404,11 @@ function writeFilterStorage() {
 
         newSiteFilters.push({
             domain: activeDomain,
+
+            regex:
+                document.querySelector('.regex').style.display === ''
+                    ? options.filter_regex
+                    : null,
 
             name: options.filter_name,
             name_exclude: options.filter_name_exclude,
