@@ -102,64 +102,7 @@ if (window._injected_downloader) {
         })
     }
 
-    let hijackInfo = {}
-
-    let hijacked_links = []
-
-    function hijackedLinkOpen(url) {
-        if (!hijacked_links.includes(url)) {
-            hijacked_links.push(url)
-
-            console.log(url)
-        }
-    }
-
-    function clickLinks(iframe) {
-        let links = iframe.contentDocument.getElementsByTagName('a')
-
-        for (let i = 0; i < links.length; i++) {
-            links[i].click()
-        }
-    }
-
-    function beginPageHijack() {
-        let iframe = document.createElement('iframe')
-        iframe.src = window.location.href
-
-        iframe.style.position = 'fixed'
-        iframe.style.top = '200vh'
-
-        document.body.appendChild(iframe)
-
-        iframe.onload = function() {
-            let iframeWindow = iframe.contentWindow
-
-            iframeWindow.open = hijackedLinkOpen
-
-            iframeWindow.addEventListener(
-                'beforeunload',
-                () => {
-                    hijackedLinkOpen(location.href)
-
-                    event.preventDefault()
-                    event.returnValue = false
-                    return false
-                },
-                {
-                    capture: true
-                }
-            )
-
-            clickLinks(iframe)
-        }
-    }
-
-    function findFilesExtra() {
-        beginPageHijack()
-    }
-
     window._downloader_find_files_function = findFiles
-    window._downloader_find_files_extra_function = findFilesExtra
 
     findFiles()
 }
