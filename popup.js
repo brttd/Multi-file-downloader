@@ -1,5 +1,3 @@
-chrome.runtime.sendMessage('executeScript')
-
 const options = {
     include_media: false,
     include_website_links: false,
@@ -641,3 +639,38 @@ elements.list.addEventListener('click', event => {
         downloadFile(allFiles[index])
     }
 })
+
+chrome.tabs.query(
+    { active: true, lastFocusedWindow: true, currentWindow: true },
+    tabs => {
+        if (tabs.length > 0) {
+            chrome.tabs.executeScript(
+                tabs[0].id,
+                {
+                    file: 'page_script.js'
+                },
+                e => {
+                    if (e === undefined) {
+                        let message = 'Unable to access tab!'
+
+                        if (chrome.runtime.lastError) {
+                            message += '\n\n' + chrome.runtime.lastError.message
+                        }
+
+                        elements.status.firstElementChild.textContent = message
+                        elements.status.style.display = ''
+                    }
+                }
+            )
+        } else {
+            let message = 'Unable to access tab!\nPlease retry.\n'
+
+            if (chrome.runtime.lastError) {
+                message += '\n\n' + chrome.runtime.lastError.message
+            }
+
+            elements.status.firstElementChild.textContent = message
+            elements.status.style.display = ''
+        }
+    }
+)

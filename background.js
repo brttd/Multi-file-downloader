@@ -23,53 +23,8 @@ function download_file(file) {
 }
 
 chrome.runtime.onMessage.addListener(message => {
-    if (message === 'executeScript') {
-        chrome.tabs.query(
-            { active: true, lastFocusedWindow: true, currentWindow: true },
-            tabs => {
-                if (tabs.length > 0) {
-                    chrome.tabs.executeScript(
-                        tabs[0].id,
-                        {
-                            file: 'page_script.js'
-                        },
-                        e => {
-                            if (e === undefined) {
-                                let message = 'Unable to access tab!'
-
-                                if (chrome.runtime.lastError) {
-                                    message +=
-                                        '\n\n' +
-                                        chrome.runtime.lastError.message
-                                }
-
-                                chrome.runtime.sendMessage({
-                                    message: message
-                                })
-                            }
-                        }
-                    )
-                } else {
-                    let message = 'Unable to access tab!\nPlease retry.\n'
-
-                    if (chrome.runtime.lastError) {
-                        message += '\n\n' + chrome.runtime.lastError.message
-                    }
-
-                    chrome.runtime.sendMessage({
-                        message: message
-                    })
-                }
-            }
-        )
-
-        chrome.tabs.executeScript({
-            file: 'page_script.js'
-        })
-    } else if (typeof message === 'object') {
-        if (message.download === true) {
-            download_file(message)
-        }
+    if (typeof message === 'object' && message.download === true) {
+        download_file(message)
     }
 })
 
