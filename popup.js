@@ -147,7 +147,7 @@ function getFileEntryElement() {
     elem.lastChild.wrap = 'soft'
     elem.lastChild.cols = '1'
     elem.lastChild.rows = '1'
-    elem.lastChild.spellcheck = 'false'
+    elem.lastChild.spellcheck = false
     elem.lastChild.addEventListener('input', textareaInputEvent)
     elem.lastChild.addEventListener('change', textareaInputEvent)
     elem.lastChild.addEventListener('blur', textareaBlurEvent)
