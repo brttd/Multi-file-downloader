@@ -3,9 +3,24 @@ window._injected_downloader = window._injected_downloader || false
 if (window._injected_downloader) {
     console.info('Downloader page_script.js has already been injected')
 
-    window._downloader_find_files_function()
+    chrome.storage.sync.get('use_link_text', result => {
+        if (typeof result.use_link_text === 'boolean') {
+            if (
+                result.use_link_text !==
+                window._downloader_options.use_link_text
+            ) {
+                window._downloader_options.use_link_text = result.use_link_text
+            }
+        }
+
+        window._downloader_find_files_function()
+    })
 } else {
     window._injected_downloader = true
+
+    window._downloader_options = {
+        use_link_text: false
+    }
 
     let fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
 
@@ -43,6 +58,8 @@ if (window._injected_downloader) {
                         name:
                             links[i].getAttribute('download') ||
                             links[i].href.split('/').pop(),
+                        link_text: links[i].textContent,
+
                         url: links[i].href,
 
                         image: false
@@ -95,6 +112,19 @@ if (window._injected_downloader) {
             }
         }
 
+        if (window._downloader_options.use_link_text) {
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].link_text) {
+                    if (!getFileExt(files[i].link_text)) {
+                        files[i].name =
+                            files[i].link_text + getFileExt(files[i].name)
+                    } else {
+                        files[i].name = files[i].link_text
+                    }
+                }
+            }
+        }
+
         chrome.runtime.sendMessage({
             url: window.location.href,
 
@@ -105,4 +135,17 @@ if (window._injected_downloader) {
     window._downloader_find_files_function = findFiles
 
     findFiles()
+
+    chrome.storage.sync.get('use_link_text', result => {
+        if (typeof result.use_link_text === 'boolean') {
+            if (
+                result.use_link_text !==
+                window._downloader_options.use_link_text
+            ) {
+                window._downloader_options.use_link_text = result.use_link_text
+
+                window._downloader_find_files_function()
+            }
+        }
+    })
 }

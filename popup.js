@@ -21,7 +21,9 @@ const options = {
     download_subdirectory: '',
     download_overwrite: false,
     download_custom_name: false,
-    download_select_location: false
+    download_select_location: false,
+
+    use_link_text: false
 }
 
 const elements = {
@@ -672,6 +674,7 @@ function saveFilterOptions() {
             true
         )
     )
+
     elements.controls.appendChild(
         getOptionElem(
             'download_custom_name',
@@ -689,6 +692,10 @@ function saveFilterOptions() {
             null,
             true
         )
+    )
+    elements.controls.appendChild(document.createElement('p'))
+    elements.controls.appendChild(
+        getOptionElem('use_link_text', 'checkbox', 'Scan link text', null, true)
     )
 
     elements.actions.appendChild(
