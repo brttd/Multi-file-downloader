@@ -306,6 +306,88 @@ function downloadFile(file) {
     })
 }
 
+let lastSaveTime = 0
+function updateFilterOptions(filters) {
+    if (filters.name) {
+        document.getElementById('OPTION_filter_name').value = filters.name
+        onOptionChange.call(
+            document.getElementById('OPTION_filter_name'),
+            'filter_name'
+        )
+    }
+    if (filters.name_exclude) {
+        document.getElementById('OPTION_filter_name_exclude').value =
+            filters.name_exclude
+
+        document.getElementById('OPTION_Exclude_by name').checked = true
+        document.getElementById('OPTION_filter_name_exclude').disabled = false
+
+        onOptionChange.call(
+            document.getElementById('OPTION_filter_name_exclude'),
+            'filter_name_exclude'
+        )
+    }
+
+    if (filters.ext) {
+        document.getElementById('OPTION_filter_ext').value = filters.ext
+        onOptionChange.call(
+            document.getElementById('OPTION_filter_ext'),
+            'filter_ext'
+        )
+    }
+    if (filters.ext_exclude) {
+        document.getElementById('OPTION_filter_ext_exclude').value =
+            filters.ext_exclude
+
+        document.getElementById('OPTION_Exclude_by type').checked = true
+        document.getElementById('OPTION_filter_ext_exclude').disabled = false
+
+        onOptionChange.call(
+            document.getElementById('OPTION_filter_ext_exclude'),
+            'filter_ext_exclude'
+        )
+    }
+}
+function writeFilterStorage() {
+    chrome.storage.local.get('site_filters', result => {
+        let activeDomain = getFileDomain(activeTabUrl)
+
+        let newSiteFilters = []
+
+        if (result.site_filters && Array.isArray(result.site_filters)) {
+            newSiteFilters = result.site_filters.filter(
+                site => site.domain !== activeDomain
+            )
+        }
+
+        while (newSiteFilters.length > 10) {
+            newSiteFilters.shift()
+        }
+
+        newSiteFilters.push({
+            domain: activeDomain,
+
+            name: options.filter_name,
+            name_exclude: options.filter_name_exclude,
+
+            ext: options.filter_ext,
+            ext_exclude: options.filter_ext_exclude
+        })
+
+        chrome.storage.local.set({
+            site_filters: newSiteFilters
+        })
+    })
+}
+function saveFilterOptions() {
+    setTimeout(() => {
+        if (Date.now() - lastSaveTime > 900) {
+            lastSaveTime = Date.now()
+            writeFilterStorage()
+        }
+    }, 1000)
+}
+
 //Interface setup
 {
     function onBoolOptionChange(optionName) {
@@ -317,6 +399,10 @@ function downloadFile(file) {
         options[optionName] = this.value
 
         updateList()
+
+        if (optionName.includes('filter')) {
+            saveFilterOptions()
+        }
     }
 
     function saveBoolOptionToStorage(optionName) {
@@ -460,7 +546,12 @@ function downloadFile(file) {
                 options.filter_name_exclude = ''
             }
 
-            updateList()
+            onOptionChange.call(
+                {
+                    value: options.filter_name_exclude
+                },
+                'filter_name_exclude'
+            )
         })
     )
     elements.controls.lastChild.appendChild(
@@ -487,7 +578,12 @@ function downloadFile(file) {
                 options.filter_ext_exclude = ''
             }
 
-            updateList()
+            onOptionChange.call(
+                {
+                    value: options.filter_ext_exclude
+                },
+                'filter_ext_exclude'
+            )
         })
     )
     elements.controls.lastChild.appendChild(
@@ -605,15 +701,6 @@ chrome.runtime.onMessage.addListener(message => {
     }
 })
 
-chrome.tabs.query(
-    { active: true, lastFocusedWindow: true, currentWindow: true },
-    tabs => {
-        if (tabs.length > 0) {
-            activeTabUrl = tabs[0].url
-        }
-    }
-)
-
 elements.list.addEventListener('click', event => {
     if (event.target.tagName !== 'BUTTON') {
         return false
@@ -644,6 +731,8 @@ chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
     tabs => {
         if (tabs.length > 0) {
+            activeTabUrl = tabs[0].url
+
             chrome.tabs.executeScript(
                 tabs[0].id,
                 {
@@ -662,6 +751,20 @@ chrome.tabs.query(
                     }
                 }
             )
+
+            chrome.storage.local.get('site_filters', result => {
+                if (result.site_filters && Array.isArray(result.site_filters)) {
+                    let activeDomain = getFileDomain(activeTabUrl)
+
+                    let filters = result.site_filters.find(
+                        site => site.domain === activeDomain
+                    )
+
+                    if (filters) {
+                        updateFilterOptions(filters)
+                    }
+                }
+            })
         } else {
             let message = 'Unable to access tab!\nPlease retry.\n'
 
