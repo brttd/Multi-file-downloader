@@ -1,479 +1,243 @@
-#downloadPopup {
-	display: block;
-	
-	position: fixed;
-	
-	max-width: calc(50vw - 20px);
-	max-height: calc(100vh - 10px);
-	
-	padding: 10px;
-	padding-top: 0;
-	/* this allows a scrollbar to appear on the right without a horizontal one being created aswell */
-	padding-right: 0;
-	
-	overflow: visible;
-	
-	background: white;
-	
-	border: none;
-	border-radius: 6px;
-	outline: none;
-	
-	opacity: 1;
-	
-	-webkit-box-shadow: 1px 1px 12px 3px rgba(0,0,0,0.4);
-	
-	font-family: sans-serif;
-	font-size: 0;
-	
-	z-index: 9999999999;
-}
-#downloadPopup #mainDownloads {
-	display: block;
-	
-	max-height: calc(100vh - 10px - 30px);
-	
-	margin: 0;
-	padding: 0;
-	padding-right: 15px;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
-	
-	overflow: auto;
-}
-#downloadPopup.hidden {
-	display: none;
-}
-#downloadPopup .header {
-	display: block;
-	
-	cursor: move;
-	
-	margin: 0;
-	margin-bottom: 5px;
-	padding: 0;
-	padding-top: 10px;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
-	
-	text-align: center;
-	
-	font-size: 20px;
-	line-height: 1;
-	font-family: Tahoma, Geneva, sans-serif;
-	font-weight: normal;
-	
-	color: rgb(97, 97, 97);
+html,
+body {
+  margin: 0;
+  padding: 0;
+  max-width: 800px;
+  max-height: 600px;
+  overflow: hidden;
+  font-family: system-ui;
+  font-size: 14px;
 }
 
-#downloadPopup #popupControls {
-	display: block;
-	
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
+body {
+  display: flex;
+  flex-flow: column;
 }
-#downloadPopup #popupControls div {
-	display: inline-block;
-	
-	cursor: pointer;
-	
-	margin: 1px;
-	padding: 2px 6px;
-	
-	font-family: monospace;
-	font-size: 17px;
-	line-height: 1;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	opacity: 1;
-	
-	transition: background 0.1s, color 0.1s;
-}
-#downloadPopup #popupControls div:hover {
-	background: rgba(0, 0, 0, 0.05);
-}
-#downloadPopup #popupControls #popupDisplayHelp:hover {
-	color: rgb(0, 0, 255);
-}
-#downloadPopup #popupControls #popupClose:hover {
-	color: rgb(255, 0, 0);
-}
-#downloadPopup #popupControls #popupClose {
-	vertical-align: top;
-	
-	padding-top: 1px;
-	padding-bottom: 3px;
+body > div {
+  align-self: stretch;
 }
 
-#downloadPopup .section {
-	display: block;
-	
-	margin: 2px;
-	padding: 1px;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
+#status {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: black;
+  background: #fff8e7;
 }
-#downloadPopup label, #downloadPopup input, #downloadPopup button {
-	display: inline-block;
-	
-	margin: 2px;
-	margin-bottom: 4px;
-	padding: 1px;
-	
-	border: none;
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
-	
-	font-size: 15px;
-	font-weight: normal;
-	text-decoration: none;
-	line-height: 1;
-	text-transform: none;
-	letter-spacing: normal;
-}
-#downloadPopup .filterSection {
-	display: inline-block;
-	
-	margin: 0;
-	margin-right: 14px;
-	padding: 0;
-}
-#downloadPopup .filterBox {
-	display: block;
-	
-	margin: 0;
-	margin-top: -4px;
-	margin-bottom: 4px;
-	padding: 0;
-	padding-left: 7px;
-	
-	box-sizing: content-box;
-	-webkit-box-orient: inline-axis;
-	flex-direction: row;
-	flex-shrink: 1;
+#status:empty {
+  display: none;
 }
 
-#downloadPopup #fileList {
-	margin: 0;
-	padding: 1px;
-	
-	border: 1px solid grey;
-	border-collapse: collapse;
-	
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
+#controls {
+  border-bottom: 1px solid #b9b8b8;
 }
 
-#downloadPopup #fileList td, #downloadPopup #fileList th {
-	margin: 0;
-	padding: 3px 4px;
-	
-	font-size: 12px;
-	line-height: 1;
-	text-align: center;
-	font-weight: normal;
-	text-decoration: none;
-	text-transform: none;
-	letter-spacing: normal;
-	
-	color: rgb(90, 90, 90);
-	
-	white-space: nowrap;
-	
-	border: 1px solid rgb(180, 180, 180);
-	
-	outline: none;
-	
-	background: transparent;
-	
-	opacity: 1;
+#controls,
+#actions {
+  flex: 0 0 auto;
+  height: fit-content;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  padding: 6px;
 }
-#downloadPopup #fileList td.removeButton {
-	cursor: pointer;
-	
-	-webkit-user-select: none;
-	
-	font-size: 16px;
-	padding: 0px 4px;
-	padding-bottom: 2px;
-	
-	font-family: monospace;
-	
-	background: transparent;
-	transition: color 0.15s, background 0.15s;
+#controls hr,
+#actions hr {
+  flex-basis: 100%;
+  width: 0px;
+  height: 0px;
+  margin: 0;
+  border: none;
 }
-#downloadPopup #fileList td.removeButton:hover {
-	color: rgb(240, 10, 10);
-	
-	background: rgba(200, 30, 30, 0.25);
+#controls button,
+#actions button {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 3px;
+  padding: 6px 12px;
+  color: white;
+  border: 1px solid #1c1c1c;
+  border-radius: 3px;
+  background: #595959;
+  outline: none;
 }
-
-#downloadPopup #fileList td.link {
-	text-align: left;
+#controls button:active,
+#actions button:active {
+  background: #898989;
+  border-color: #595959;
 }
-#downloadPopup #fileList td.link a {
-	text-decoration: none;
-	color: rgb(86, 124, 206);
+#controls button.highlight,
+#actions button.highlight {
+  border-color: #116611;
+  background: #2d882d;
 }
-#downloadPopup #fileList td.link a:hover {
-	text-decoration: underline;
+#controls button.highlight:active,
+#actions button.highlight:active {
+  background: #88cc88;
+  border-color: #2d882d;
 }
-
-/* now the various input & button styling */
-#downloadPopup button {
-	display: inline-block;
-	
-	cursor: pointer;
-	
-	vertical-align: top;
-	
-	padding: 5px 8px;
-	
-	border: none;
-	border-radius: 3px;
-	
-	background-color: white;
-	
-	border: 1px solid rgb(224, 224, 224);
-	border-radius: 0;
-	
-	outline: none;
-	
-	opacity: 1;
-	
-	font-size: 15px;
-	font-family: sans-serif;
-	
-	color: rgb(86, 86, 86);
-	
-	align-items: stretch;
-	box-sizing: content-box;
-	
-	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
-	
-	transition: box-shadow 0.2s, border-color 0.2s, background-color 0.2s, color 0.2s;
+#controls input,
+#actions input {
+  padding: 3px 6px;
 }
-#downloadPopup button:hover {
-	color: rgb(5, 200, 10);
+#controls div,
+#actions div {
+  flex: 1 1 auto;
+  align-self: center;
+  min-width: fit-content;
+  max-width: 35ch;
+  margin: 3px;
+  padding: 3px;
 }
-#downloadPopup button:active {
-	color: rgb(0, 255, 0);
-	
-	box-shadow: 0px 0px 1px 1px rgba(0, 255, 0, 0.5);
-	border-color: rgb(140, 220, 160);
+#controls div.multi,
+#actions div.multi {
+  padding: 3px 0;
 }
-#downloadPopup #updateFileList, #downloadPopup #updateFileList2 {
-	# background-color: rgb(160, 160, 160);
-	
-	# color: transparent;
-	# -webkit-user-select: none;
+#controls div.multi div,
+#actions div.multi div {
+  margin: 0;
+  padding: 0 3px;
 }
-#downloadPopup #updateFileList:hover, #downloadPopup #updateFileList2:hover {
-	# background-color: rgb(5, 200, 10);
+#controls div.multi div + div,
+#actions div.multi div + div {
+  padding-top: 3px;
 }
-#downloadPopup #updateFileList:active, #downloadPopup #updateFileList2:active {
-	# background-color: rgb(0, 255, 0);
+#controls div input,
+#controls div label,
+#actions div input,
+#actions div label {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
 }
-#downloadPopup #downloadAllFiles {
-	# display: block;
+#controls div label,
+#actions div label {
+  padding-bottom: 1.5px;
+}
+#controls div.checkbox,
+#actions div.checkbox {
+  flex: 0 0 auto;
+}
+#controls div.checkbox input,
+#controls div.checkbox label,
+#actions div.checkbox input,
+#actions div.checkbox label {
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  padding: 0;
+}
+#controls div.checkbox input,
+#actions div.checkbox input {
+  margin-right: 3px;
+  margin-top: 3px;
 }
 
-#downloadPopup input[type=checkbox] {
-	display: none;
+#table {
+  overflow-y: auto;
+  position: relative;
+  max-width: 800px;
 }
 
-#downloadPopup input[type=text] {
-	display: inline-block;
-	
-	margin-right: 4px;
-	padding: 3px;
-	padding-left: 6px;
-	
-	border: 1px solid;
-	border-color: rgb(224, 224, 224);
-	outline: none;
-	
-	background: white;
-	
-	opacity: 1;
-	
-	font-size: 14px;
-	font-family: 'Segoe UI', Tahoma, sans-serif;
-	
-	box-sizing: content-box;
-	
-	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
-	
-	transition: box-shadow 0.1s, border-color 0.2s;
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: white;
 }
-#downloadPopup input[type=text]:focus {
-	box-shadow: 0px 0px 1px 1px rgba(0, 100, 255, 0.5);
-	border-color: rgb(140, 160, 220);
+ul#header {
+  position: sticky;
+  top: 0;
 }
-
-#downloadPopup label .switch {
-	cursor: pointer;
-	
-	margin: 0 6px;
-	padding: 0;
-	
-	position: relative;
-	top: 0.2em;
-	
-	display: inline-block;
-	
-	font-size: 1.4em;
-	
-	width: 1.5em;
-	height: 0.75em;
-	
-	border: 1px solid rgb(224, 224, 224);
-	border-radius: 0.75em;
-	
-	outline: none;
-	
-	opacity: 1;
-	
-	box-sizing: content-box;
-	-webkit-box-orient: inline-axis;
-	flex-direction: row;
-	flex-shrink: 1;
-	
-	background: white;
-	transition: background 0.2s, border-color 0.2s;
+ul#header span {
+  background: #ebebeb;
 }
-#downloadPopup label .switch .button {
-	margin: 0;
-	padding: 0;
-	
-	display: block;
-	
-	font-size: 1em;
-	
-	pointer-events: all;
-	
-	width: 0.75em;
-	height: 0.75em;
-	
-	position: relative;
-	left: 0;
-	
-	border: none;
-	border-radius: 0.75em;
-	
-	outline: none;
-	
-	opacity: 1;
-	
-	background: rgb(240, 240, 240);
-	
-	box-sizing: content-box;
-	-webkit-box-orient: inline-axis;
-	flex-direction: row;
-	flex-shrink: 1;
-	
-	/* offset-x | offset-y | blur-radius | spread-radius | color */
-	box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
-	
-	transition: background 0.2s, left 0.3s;
+ul#list:empty::after {
+  content: 'No Files!';
+  display: block;
+  padding: 6px;
+  color: white;
+  text-align: center;
+  background: #aa3939;
 }
-#downloadPopup input:checked + label .switch {
-	background: rgb(76, 216, 100);
-    border-color: rgb(76, 216, 100);
+ul li {
+  display: flex;
+  flex-flow: row;
+  border-bottom: 1px solid #b9b8b8;
 }
-#downloadPopup input:checked + label .switch .button {
-	background: white;
-	left: calc(1.5em - 0.75em);
+ul li span,
+ul li button {
+  display: inline-block;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  padding: 2px 3px;
+  font: inherit;
 }
-
-#noFilename:checked ~ #folderName, #noFilename:checked ~ #folderNameLabel {
-	opacity: 0.5;
-	pointer-events: none;
-
-	display: none;
+ul li button,
+ul li .button {
+  flex: 0 0 auto;
+  width: 24px;
+  border: none;
+  outline: none;
+  font-size: 1.1em;
+  color: white;
 }
-
-#downloadPopup .highlight {
-	background: rgba(200, 10, 10, 0.2) !important;
-	outline: 1px solid rgba(200, 10, 10, 0.4) !important;
-	outline-radius: 3px  !important;
-	font-weight: normal !important;
+ul li button.toggle-button, ul li button.download-button,
+ul li .button.toggle-button,
+ul li .button.download-button {
+  background: #2d882d;
 }
-
-#downloadPopup #popupHelpDialog {
-	position: absolute;
-	top: 8px;
-	left: calc(100% + 8px);
-	
-	width: fit-content;
-	max-width: calc(100% - 20px - 8px);
-	
-	padding: 10px;
-	
-	border: none;
-	border-radius: 6px;
-	
-	outline: none;
-	
-	background: white;
-	
-	opacity: 1;
-	
-	/* this places the button on the right, but the text can still be aligned to the left in sub elements*/
-	text-align: right;
-	
-	-webkit-box-shadow: 1px 1px 12px 3px rgba(0,0,0,0.4);
+ul li textarea {
+  -webkit-appearance: none;
+  resize: none;
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  padding: 2px 3px;
+  font: inherit;
+  word-wrap: break-word;
+  word-break: break-all;
+  border: none;
+  background: transparent;
+  outline: none;
+  overflow: hidden;
 }
-#downloadPopup #popupHelpDialog p, button {
-	text-align: left;
-	
-	width: fit-content;
-	
-	font-size: 15px;
-	line-height: 1.2;
-	
-	border: none;
-	outline: none;
-	background: transparent;
-	
-	opacity: 1;
+ul li span,
+ul li textarea {
+  flex: 1 1 auto;
+  overflow-wrap: break-word;
 }
-#downloadPopup #popupHelpDialog button {
-	margin: 0;
-	
-	box-shadow: none;
-	border: none;
-	background: transparent;
+ul li span.domain,
+ul li textarea.domain {
+  width: 15ch;
+}
+ul li span.url,
+ul li textarea.url {
+  width: 30ch;
+}
+ul li span.name,
+ul li textarea.name {
+  width: 15ch;
+  text-align: right;
+}
+ul li span.type,
+ul li textarea.type {
+  min-width: 5ch;
+  width: 6ch;
+}
+ul li span.url, ul li span.type,
+ul li textarea.url,
+ul li textarea.type {
+  background: #ebebeb;
+}
+ul li.disabled .toggle-button {
+  background: #aa3939;
+}
+ul li.disabled span,
+ul li.disabled textarea {
+  opacity: 0.3;
+  pointer-events: none;
 }
