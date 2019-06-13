@@ -513,16 +513,14 @@ function saveFilterOptions() {
             }
 
             if (useStorage) {
-                let keyName = 'OPTION_' + optionName
-
-                chrome.storage.sync.get(keyName, result => {
-                    elem.firstChild.checked = result[keyName]
+                chrome.storage.sync.get(optionName, result => {
+                    elem.firstChild.checked = result[optionName]
                     onBoolOptionChange.call(elem.firstChild, optionName)
                 })
 
                 elem.firstChild.addEventListener(
                     'change',
-                    saveBoolOptionToStorage.bind(elem.firstChild, keyName)
+                    saveBoolOptionToStorage.bind(elem.firstChild, optionName)
                 )
             }
         } else {
@@ -539,16 +537,14 @@ function saveFilterOptions() {
             }
 
             if (useStorage) {
-                let keyName = 'OPTION_' + optionName
-
-                chrome.storage.sync.get(keyName, result => {
-                    elem.lastChild.value = result[keyName]
+                chrome.storage.sync.get(optionName, result => {
+                    elem.lastChild.value = result[optionName]
                     onOptionChange.call(elem.lastChild, optionName)
                 })
 
                 elem.lastChild.addEventListener(
                     'input',
-                    saveOptionToStorage.bind(elem.lastChild, keyName)
+                    saveOptionToStorage.bind(elem.lastChild, optionName)
                 )
             }
         }
