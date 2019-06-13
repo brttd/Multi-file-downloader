@@ -58,7 +58,7 @@ if (window._injected_downloader) {
                         name:
                             links[i].getAttribute('download') ||
                             links[i].href.split('/').pop(),
-                        link_text: links[i].textContent,
+                        link_text: links[i].textContent.replace('\n', ''),
 
                         url: links[i].href,
 
