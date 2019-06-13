@@ -389,8 +389,6 @@ function downloadFile(file) {
                 let keyName = 'OPTION_' + optionName
 
                 chrome.storage.sync.get(keyName, function(result) {
-                    console.log(keyName, result[keyName])
-
                     elem.firstChild.checked = result[keyName]
                     onBoolOptionChange.call(elem.firstChild, optionName)
                 })
@@ -417,8 +415,6 @@ function downloadFile(file) {
                 let keyName = 'OPTION_' + optionName
 
                 chrome.storage.sync.get(keyName, function(result) {
-                    console.log(keyName, result[keyName])
-
                     elem.lastChild.value = result[keyName]
                     onOptionChange.call(elem.lastChild, optionName)
                 })
