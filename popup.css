@@ -52,6 +52,10 @@ body > div {
   align-items: flex-start;
   padding: 6px;
 }
+#controls .message:empty,
+#actions .message:empty {
+  display: none;
+}
 #controls hr,
 #actions hr {
   flex-basis: 100%;
@@ -112,6 +116,10 @@ body > div {
 #controls div.multi div + div,
 #actions div.multi div + div {
   padding-top: 3px;
+}
+#controls div.regex,
+#actions div.regex {
+  max-width: 80ch;
 }
 #controls div input,
 #controls div label,
