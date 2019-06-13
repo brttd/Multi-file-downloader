@@ -22,7 +22,8 @@ const options = {
 
     download_subdirectory: '',
     download_overwrite: false,
-    download_custom_name: false
+    download_custom_name: false,
+    download_select_location: false
 }
 
 const elements = {
@@ -301,6 +302,8 @@ function downloadFile(file) {
         name: options.download_custom_name ? file.name : null,
         subdirectory: options.download_subdirectory,
 
+        select_location: options.download_select_location,
+
         conflictAction: options.download_overwrite ? 'overwrite' : 'uniquify'
     })
 }
@@ -534,6 +537,15 @@ function downloadFile(file) {
             'download_custom_name',
             'checkbox',
             'Use custom name',
+            null,
+            true
+        )
+    )
+    elements.controls.appendChild(
+        getOptionElem(
+            'download_select_location',
+            'checkbox',
+            'Show Save Dialog',
             null,
             true
         )
