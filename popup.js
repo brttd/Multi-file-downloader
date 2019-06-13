@@ -74,7 +74,6 @@ let webFileTypes = [
     'rhtml',
     'xml',
     'rss',
-    'svg',
     'cgi',
     'dll'
 ]
