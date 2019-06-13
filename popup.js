@@ -23,8 +23,7 @@ const options = {
 
     download_subdirectory: '',
     download_overwrite: false,
-    download_custom_name: false,
-    download_notify: true
+    download_custom_name: false
 }
 
 const elements = {
@@ -498,11 +497,9 @@ function downloadFile(file) {
     )
 
     elements.actions.appendChild(
-        getOptionElem(
-            'download_notify',
-            'checkbox',
-            'Notification when finished'
-        )
+        getOptionElem('', 'button', 'View Downloads', () => {
+            chrome.tabs.create({ url: 'chrome://downloads' })
+        })
     )
 }
 
