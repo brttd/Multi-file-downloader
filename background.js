@@ -32,12 +32,36 @@ chrome.runtime.onMessage.addListener(message => {
             { active: true, lastFocusedWindow: true, currentWindow: true },
             tabs => {
                 if (tabs.length > 0) {
-                    chrome.tabs.executeScript(tabs[0].id, {
-                        file: 'page_script.js'
-                    })
+                    chrome.tabs.executeScript(
+                        tabs[0].id,
+                        {
+                            file: 'page_script.js'
+                        },
+                        e => {
+                            if (e === undefined) {
+                                let message = 'Unable to access tab!'
+
+                                if (chrome.runtime.lastError) {
+                                    message +=
+                                        '\n\n' +
+                                        chrome.runtime.lastError.message
+                                }
+
+                                chrome.runtime.sendMessage({
+                                    message: message
+                                })
+                            }
+                        }
+                    )
                 } else {
+                    let message = 'Unable to access tab!\nPlease retry.\n'
+
+                    if (chrome.runtime.lastError) {
+                        message += '\n\n' + chrome.runtime.lastError.message
+                    }
+
                     chrome.runtime.sendMessage({
-                        message: 'Unable to access tab!\nPlease retry.'
+                        message: message
                     })
                 }
             }
