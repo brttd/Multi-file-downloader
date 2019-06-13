@@ -6,12 +6,10 @@ function download_file(file) {
         {
             url: file.url,
             conflictAction: file.conflictAction || 'uniquify',
-            saveAs: false
+            saveAs: file.select_location || false
         },
         id => {
             if (id) {
-                console.log(file.subdirectory)
-
                 active_downloads.push({
                     id: id,
 
@@ -19,8 +17,6 @@ function download_file(file) {
                     subdirectory: file.subdirectory || null
                 })
                 download_ids.push(id)
-            } else {
-                console.error(chrome.runtime.lastError)
             }
         }
     )
