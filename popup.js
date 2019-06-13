@@ -472,7 +472,7 @@ function saveFilterOptions() {
             if (useStorage) {
                 let keyName = 'OPTION_' + optionName
 
-                chrome.storage.sync.get(keyName, function(result) {
+                chrome.storage.sync.get(keyName, result => {
                     elem.firstChild.checked = result[keyName]
                     onBoolOptionChange.call(elem.firstChild, optionName)
                 })
@@ -498,7 +498,7 @@ function saveFilterOptions() {
             if (useStorage) {
                 let keyName = 'OPTION_' + optionName
 
-                chrome.storage.sync.get(keyName, function(result) {
+                chrome.storage.sync.get(keyName, result => {
                     elem.lastChild.value = result[keyName]
                     onOptionChange.call(elem.lastChild, optionName)
                 })
