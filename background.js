@@ -1,7 +1,19 @@
 let active_downloads = []
 let download_ids = []
 
-function download_file(file) {
+let to_download_list = []
+
+let requesting_download = false
+
+function processDownloadQueue() {
+    if (requesting_download || to_download_list.length === 0) {
+        return false
+    }
+
+    requesting_download = true
+
+    let file = to_download_list.shift()
+
     chrome.downloads.download(
         {
             url: file.url,
@@ -9,6 +21,8 @@ function download_file(file) {
             saveAs: file.select_location || false
         },
         id => {
+            requesting_download = false
+
             if (id) {
                 active_downloads.push({
                     id: id,
@@ -18,15 +32,24 @@ function download_file(file) {
 
                     conflictAction: file.conflictAction || 'uniquify'
                 })
+
                 download_ids.push(id)
             }
+
+            processDownloadQueue()
         }
     )
 }
 
+function queueDownload(file) {
+    to_download_list.push(file)
+
+    processDownloadQueue()
+}
+
 chrome.runtime.onMessage.addListener(message => {
     if (typeof message === 'object' && message.download === true) {
-        download_file(message)
+        queueDownload(message)
     }
 })
 
