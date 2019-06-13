@@ -34,6 +34,7 @@ const elements = {
 const fileEntryElementPool = []
 
 let activeTabUrl = null
+let activeTabId = null
 
 let fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
 let dotRegex = new RegExp(/\./)
@@ -701,13 +702,21 @@ function saveFilterOptions() {
     )
 
     elements.actions.appendChild(
+        getOptionElem('', 'button', 'Re-Scan Page', () => {
+            scanPage()
+        })
+    )
+
+    elements.actions.appendChild(document.createElement('hr'))
+
+    elements.actions.appendChild(
         getOptionElem('', 'button', 'View Downloads', () => {
             chrome.tabs.create({ url: 'chrome://downloads' })
         })
     )
 
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'View Options', () => {
+        getOptionElem('', 'button', 'Open Options', () => {
             chrome.runtime.openOptionsPage()
         })
     )
@@ -770,30 +779,35 @@ elements.list.addEventListener('click', event => {
     }
 })
 
+function scanPage() {
+    chrome.tabs.executeScript(
+        activeTabId,
+        {
+            file: 'page_script.js'
+        },
+        e => {
+            if (e === undefined) {
+                let message = 'Unable to access tab!'
+
+                if (chrome.runtime.lastError) {
+                    message += '\n\n' + chrome.runtime.lastError.message
+                }
+
+                elements.status.firstElementChild.textContent = message
+                elements.status.style.display = ''
+            }
+        }
+    )
+}
+
 chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
     tabs => {
         if (tabs.length > 0) {
             activeTabUrl = tabs[0].url
+            activeTabId = tabs[0].id
 
-            chrome.tabs.executeScript(
-                tabs[0].id,
-                {
-                    file: 'page_script.js'
-                },
-                e => {
-                    if (e === undefined) {
-                        let message = 'Unable to access tab!'
-
-                        if (chrome.runtime.lastError) {
-                            message += '\n\n' + chrome.runtime.lastError.message
-                        }
-
-                        elements.status.firstElementChild.textContent = message
-                        elements.status.style.display = ''
-                    }
-                }
-            )
+            scanPage()
 
             chrome.storage.local.get('site_filters', result => {
                 if (result.site_filters && Array.isArray(result.site_filters)) {
@@ -826,5 +840,11 @@ chrome.storage.sync.get('regex_enabled', result => {
         document.querySelector('.regex').style.display = ''
     } else {
         document.querySelector('.regex').style.display = 'none'
+    }
+})
+
+chrome.extension.isAllowedFileSchemeAccess(allowed => {
+    if (!allowed) {
+        console.log('File URL access is not allowed')
     }
 })
