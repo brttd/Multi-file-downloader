@@ -7,7 +7,7 @@
 
     "description": "Easily and quickly download multiple files from websites.",
 
-    "permissions": ["notifications", "downloads", "activeTab", "storage"],
+    "permissions": ["downloads", "activeTab", "storage"],
 
     "background": {
         "scripts": ["background.js"],
