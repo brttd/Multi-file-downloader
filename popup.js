@@ -723,7 +723,7 @@ function saveFilterOptions() {
         })
     )
 
-    elements.actions.appendChild(document.createElement('hr'))
+    elements.actions.appendChild(document.createElement('p'))
 
     elements.actions.appendChild(
         getOptionElem('', 'button', 'View Downloads', () => {
