@@ -702,7 +702,7 @@ function saveFilterOptions() {
     )
 
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'Re-Scan Page', () => {
+        getOptionElem('', 'button', 'Rescan Page', () => {
             scanPage()
         })
     )
