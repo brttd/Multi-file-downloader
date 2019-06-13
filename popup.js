@@ -1,4 +1,3 @@
-document.getElementById('status').textContent = ''
 chrome.runtime.sendMessage('executeScript')
 
 const options = {
@@ -508,7 +507,9 @@ chrome.runtime.onMessage.addListener(message => {
     }
 
     if (message.message) {
-        elements.status.textContent = message.message
+        elements.status.firstChild.textContent = message.message
+        elements.status.style.display = ''
+
         return false
     }
 
@@ -516,8 +517,6 @@ chrome.runtime.onMessage.addListener(message => {
         if (message.url !== activeTabUrl) {
             return false
         }
-
-        elements.status.textContent = ''
 
         allFiles = []
 
