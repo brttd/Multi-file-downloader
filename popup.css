@@ -70,19 +70,20 @@ body > div {
   align-self: center;
   margin: 3px;
   padding: 6px 12px;
-  color: white;
-  border: 1px solid #1c1c1c;
+  color: black;
+  border: 1px solid #b9b8b8;
   border-radius: 3px;
-  background: #595959;
+  background: #e6e5e5;
   outline: none;
 }
 #controls button:active,
 #actions button:active {
-  background: #898989;
-  border-color: #595959;
+  background: #b9b8b8;
+  border-color: #898989;
 }
 #controls button.highlight,
 #actions button.highlight {
+  color: white;
   border-color: #116611;
   background: #2d882d;
 }
