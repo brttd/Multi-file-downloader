@@ -187,9 +187,16 @@ function filterFileResult(file) {
         return false
     }
 
-    let ext = getFileExt(file.url)
+    let ext = getFileExt(file.url).toLowerCase()
 
     if (!options.include_website_links && webFileTypes.includes(ext)) {
+        return false
+    }
+
+    if (
+        options.filters.regex &&
+        !file.url.toLowerCase().match(options.filters.regex)
+    ) {
         return false
     }
 
@@ -215,11 +222,13 @@ function filterFileResult(file) {
         }
     }
 
+    let url = file.url.toLowerCase()
+
     if (options.filters.name) {
         let found = false
 
         for (let i = 0; i < options.filters.name.length; i++) {
-            if (file.url.includes(options.filters.name[i])) {
+            if (url.includes(options.filters.name[i])) {
                 found = true
                 break
             }
@@ -231,7 +240,7 @@ function filterFileResult(file) {
     }
     if (options.filters.name_exclude) {
         for (let i = 0; i < options.filters.name_exclude.length; i++) {
-            if (file.url.includes(options.filters.name_exclude[i])) {
+            if (url.includes(options.filters.name_exclude[i])) {
                 return false
             }
         }
@@ -241,8 +250,22 @@ function filterFileResult(file) {
 }
 
 function updateList() {
+    if (options.filter_regex) {
+        try {
+            options.filters.regex = new RegExp(options.filter_regex)
+            elements.regex_message.textContent = ''
+        } catch (error) {
+            elements.regex_message.textContent = '' + error
+            options.filters.regex = null
+        }
+    } else {
+        options.filters.regex = null
+        elements.regex_message.textContent = ''
+    }
+
     if (options.filter_name) {
         options.filters.name = options.filter_name
+            .toLowerCase()
             .split(',')
             .filter(name => name.trim().length > 0)
             .map(name => name.trim())
@@ -251,6 +274,7 @@ function updateList() {
     }
     if (options.filter_name_exclude) {
         options.filters.name_exclude = options.filter_name_exclude
+            .toLowerCase()
             .split(',')
             .filter(name => name.trim().length > 0)
             .map(name => name.trim())
@@ -260,6 +284,7 @@ function updateList() {
 
     if (options.filter_ext) {
         options.filters.ext = options.filter_ext
+            .toLowerCase()
             .split(',')
             .filter(ext => ext.trim().length > 0)
             .map(ext => ext.trim())
@@ -268,6 +293,7 @@ function updateList() {
     }
     if (options.filter_ext_exclude) {
         options.filters.ext_exclude = options.filter_ext_exclude
+            .toLowerCase()
             .split(',')
             .filter(ext => ext.trim().length > 0)
             .map(ext => ext.trim())
@@ -527,6 +553,17 @@ function saveFilterOptions() {
     )
     elements.controls.appendChild(document.createElement('hr'))
 
+    elements.controls.appendChild(
+        getOptionElem('filter_regex', 'text', 'Filter by RegExp')
+    )
+    elements.regex_message = document.createElement('label')
+    elements.regex_message.className = 'message'
+    elements.regex_message.id = 'regex_message'
+    elements.controls.lastChild.appendChild(elements.regex_message)
+    elements.controls.lastChild.className = 'regex'
+
+    elements.controls.appendChild(document.createElement('hr'))
+
     elements.controls.appendChild(document.createElement('div'))
     elements.controls.lastChild.className = 'multi'
     elements.controls.lastChild.appendChild(
@@ -668,6 +705,12 @@ function saveFilterOptions() {
             chrome.tabs.create({ url: 'chrome://downloads' })
         })
     )
+
+    elements.actions.appendChild(
+        getOptionElem('', 'button', 'View Options', () => {
+            chrome.runtime.openOptionsPage()
+        })
+    )
 }
 
 chrome.runtime.onMessage.addListener(message => {
@@ -777,3 +820,11 @@ chrome.tabs.query(
         }
     }
 )
+
+chrome.storage.sync.get('regex_enabled', result => {
+    if (result.regex_enabled) {
+        document.querySelector('.regex').style.display = ''
+    } else {
+        document.querySelector('.regex').style.display = 'none'
+    }
+})
