@@ -609,7 +609,7 @@ function scanPage() {
     elements.controls.appendChild(document.createElement('hr'))
 
     elements.controls.appendChild(
-        getOptionElem('filter_regex', 'text', 'Filter by RegExp')
+        getOptionElem('filter_regex', 'text', 'RegExp URL filter')
     )
     elements.regex_message = document.createElement('label')
     elements.regex_message.className = 'message'
@@ -683,9 +683,7 @@ function scanPage() {
     )
     document.getElementById('OPTION_filter_ext_exclude').style.display = 'none'
 
-    elements.controls.appendChild(document.createElement('hr'))
-
-    elements.controls.appendChild(
+    elements.actions.appendChild(
         getOptionElem(
             'download_subdirectory',
             'text',
@@ -704,8 +702,8 @@ function scanPage() {
             true
         )
     )
-    elements.controls.appendChild(document.createElement('hr'))
-    elements.controls.appendChild(
+
+    elements.actions.appendChild(
         getOptionElem(
             'download_overwrite',
             'checkbox',
@@ -715,7 +713,7 @@ function scanPage() {
         )
     )
 
-    elements.controls.appendChild(
+    elements.actions.appendChild(
         getOptionElem(
             'download_custom_name',
             'checkbox',
@@ -724,7 +722,7 @@ function scanPage() {
             true
         )
     )
-    elements.controls.appendChild(
+    elements.actions.appendChild(
         getOptionElem(
             'download_select_location',
             'checkbox',
@@ -733,6 +731,8 @@ function scanPage() {
             true
         )
     )
+
+    elements.actions.appendChild(document.createElement('hr'))
 
     elements.actions.appendChild(
         getOptionElem('', 'button', 'Enable All', () => {
