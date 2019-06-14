@@ -93,6 +93,16 @@ function cancelDownloads(url) {
 }
 
 function sendStatsUpdate() {
+    if (active_downloads.length > 0 || to_download_list.length > 0) {
+        chrome.browserAction.setBadgeText({
+            text: (active_downloads.length + to_download_list.length).toString()
+        })
+    } else {
+        chrome.browserAction.setBadgeText({
+            text: ''
+        })
+    }
+
     chrome.runtime.sendMessage({
         downloads: {
             active: active_downloads.length,
@@ -100,6 +110,10 @@ function sendStatsUpdate() {
         }
     })
 }
+
+chrome.browserAction.setBadgeBackgroundColor({
+    color: '#116611'
+})
 
 chrome.runtime.onMessage.addListener(message => {
     if (message === 'get-stats') {
