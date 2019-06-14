@@ -83,6 +83,8 @@ let webFileTypes = [
 
 let allFiles = []
 
+let downloaded_urls = []
+
 function textareaInputEvent(event) {
     if (event.keyCode === 13) {
         event.preventDefault()
@@ -337,6 +339,10 @@ function downloadFile(file) {
 
         conflictAction: options.download_overwrite ? 'overwrite' : 'uniquify'
     })
+
+    if (!downloaded_urls.includes(file.url)) {
+        downloaded_urls.push(file.url)
+    }
 }
 
 let lastSaveTime = 0
@@ -712,13 +718,40 @@ function saveFilterOptions() {
 
     elements.actions.appendChild(
         getOptionElem('highlight', 'button', 'Download All', () => {
+            let duplicates = []
+
             for (let i = 0; i < allFiles.length; i++) {
                 if (allFiles[i].active && allFiles[i].enabled) {
-                    downloadFile(allFiles[i])
+                    if (downloaded_urls.includes(allFiles[i].url)) {
+                        duplicates.push(allFiles[i])
+                    } else {
+                        downloadFile(allFiles[i])
+                    }
+                }
+            }
+
+            if (duplicates.length > 0) {
+                let message = ''
+
+                if (duplicates.length === 1) {
+                    message =
+                        '1 of the enabled files has already been sent to the download queue! Do you want to download it again?'
+                } else {
+                    message =
+                        duplicates.length.toString() +
+                        ' of the enabled files have already been sent to the download queue! Do you want to download them again?'
+                }
+
+                if (confirm(message)) {
+                    for (let i = 0; i < duplicates.length; i++) {
+                        downloadFile(duplicates[i])
+                    }
                 }
             }
         })
     )
+
+    elements.actions.appendChild(document.createElement('p'))
 
     elements.actions.appendChild(
         getOptionElem('', 'button', 'Rescan Page', () => {
@@ -791,6 +824,14 @@ chrome.runtime.onMessage.addListener(message => {
             elements.download_status.parentNode.className = 'active'
         }
 
+        if (message.downloads.active > 0 || message.downloads.waiting > 0) {
+            cancelActiveButton.disabled = false
+            cancelAllButton.disabled = false
+        } else {
+            cancelActiveButton.disabled = true
+            cancelAllButton.disabled = true
+        }
+
         if (message.downloads.waiting >= 1) {
             elements.download_status.textContent +=
                 ', ' + message.downloads.waiting.toString() + ' waiting.'
@@ -822,7 +863,17 @@ elements.list.addEventListener('click', event => {
             event.target.parentNode.className = 'disabled'
         }
     } else if (event.target.className === 'download-button') {
-        downloadFile(allFiles[index])
+        if (downloaded_urls.includes(allFiles[index].url)) {
+            if (
+                confirm(
+                    'This file has already been sent to the download queue! Do you want to download it again?'
+                )
+            ) {
+                downloadFile(allFiles[index])
+            }
+        } else {
+            downloadFile(allFiles[index])
+        }
     }
 })
 
