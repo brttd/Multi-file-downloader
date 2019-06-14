@@ -32,6 +32,8 @@ function processDownloadQueue() {
                 active_downloads.push({
                     id: id,
 
+                    source: file.source,
+
                     name: file.name || null,
                     subdirectory: file.subdirectory || null,
 
@@ -54,6 +56,42 @@ function queueDownload(file) {
     sendStatsUpdate()
 }
 
+function cancelDownloads(url) {
+    if (url) {
+        for (let i = to_download_list.length - 1; i >= 0; i--) {
+            if (to_download_list[i].source === url) {
+                console.log('cancel', i)
+                to_download_list.splice(i, 1)
+            }
+        }
+
+        for (let i = active_downloads.length - 1; i >= 0; i--) {
+            if (active_downloads[i].source === url) {
+                console.log('cancelling', active_downloads[i].id)
+                chrome.downloads.cancel(active_downloads[i].id, () => {
+                    active_downloads.splice(i, 1)
+
+                    processDownloadQueue()
+                    sendStatsUpdate()
+                })
+            }
+        }
+    } else {
+        to_download_list.splice(0, to_download_list.length)
+
+        for (let i = active_downloads.length - 1; i >= 0; i--) {
+            chrome.downloads.cancel(active_downloads[i].id, () => {
+                active_downloads.splice(i, 1)
+
+                processDownloadQueue()
+                sendStatsUpdate()
+            })
+        }
+    }
+
+    sendStatsUpdate()
+}
+
 function sendStatsUpdate() {
     chrome.runtime.sendMessage({
         downloads: {
@@ -68,8 +106,14 @@ chrome.runtime.onMessage.addListener(message => {
         sendStatsUpdate()
     }
 
-    if (typeof message === 'object' && message.download === true) {
-        queueDownload(message)
+    if (typeof message === 'object') {
+        if (message.download === true) {
+            queueDownload(message)
+        }
+
+        if (message.cancel_downloads === true) {
+            cancelDownloads(message.url)
+        }
     }
 })
 
