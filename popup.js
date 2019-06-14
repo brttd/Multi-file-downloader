@@ -230,12 +230,16 @@ function filterFileResult(file) {
     }
 
     let url = file.url.toLowerCase()
+    let name = file.name.toLowerCase()
 
     if (options.filters.name) {
         let found = false
 
         for (let i = 0; i < options.filters.name.length; i++) {
-            if (url.includes(options.filters.name[i])) {
+            if (
+                url.includes(options.filters.name[i]) ||
+                name.includes(options.filters.name[i])
+            ) {
                 found = true
                 break
             }
@@ -247,7 +251,10 @@ function filterFileResult(file) {
     }
     if (options.filters.name_exclude) {
         for (let i = 0; i < options.filters.name_exclude.length; i++) {
-            if (url.includes(options.filters.name_exclude[i])) {
+            if (
+                url.includes(options.filters.name_exclude[i]) ||
+                name.includes(options.filters.name_exclude[i])
+            ) {
                 return false
             }
         }
