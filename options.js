@@ -10,6 +10,18 @@ function onInputChange() {
     let obj = {}
     obj[this.id] = this.value
 
+    if (this.type === 'number') {
+        obj[this.id] = parseFloat(this.value)
+
+        console.log(obj[this.id])
+
+        if (!isFinite(obj[this.id])) {
+            obj[this.id] = parseFloat(this.getAttribute('value'))
+        }
+
+        console.log(obj[this.id])
+    }
+
     chrome.storage.sync.set(obj)
 }
 
