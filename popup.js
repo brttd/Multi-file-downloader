@@ -28,7 +28,8 @@ const options = {
 
 const elements = {
     status: document.getElementById('status'),
-    download_status: document.getElementById('download_status'),
+    download_status: document.getElementById('download_status')
+        .firstElementChild,
     controls: document.getElementById('controls'),
     actions: document.getElementById('actions'),
     list: document.getElementById('list')
@@ -325,6 +326,8 @@ function updateList() {
 function downloadFile(file) {
     chrome.runtime.sendMessage({
         download: true,
+
+        source: activeTabUrl,
 
         url: file.url,
         name: options.download_custom_name ? file.name : null,
@@ -777,15 +780,15 @@ chrome.runtime.onMessage.addListener(message => {
 
         if (message.downloads.active === 0) {
             elements.download_status.textContent = 'No active downloads'
-            elements.download_status.className = ''
+            elements.download_status.parentNode.className = ''
         } else if (message.downloads.active === 1) {
             elements.download_status.textContent = '1 active download'
-            elements.download_status.className = 'active'
+            elements.download_status.parentNode.className = 'active'
         } else {
             elements.download_status.textContent =
                 message.downloads.active.toString() + ' active downloads'
 
-            elements.download_status.className = 'active'
+            elements.download_status.parentNode.className = 'active'
         }
 
         if (message.downloads.waiting >= 1) {
@@ -896,3 +899,28 @@ chrome.extension.isAllowedFileSchemeAccess(allowed => {
 })
 
 chrome.runtime.sendMessage('get-stats')
+
+let cancelActiveButton = document.createElement('button')
+cancelActiveButton.textContent = 'Cancel From This Tab'
+
+let cancelAllButton = document.createElement('button')
+cancelAllButton.textContent = 'Cancel All'
+
+cancelActiveButton.addEventListener('click', () => {
+    if (activeTabUrl) {
+        chrome.runtime.sendMessage({
+            cancel_downloads: true,
+            url: activeTabUrl
+        })
+    }
+})
+cancelAllButton.addEventListener('click', () => {
+    if (confirm('Are you sure you want to cancel all downloads?')) {
+        chrome.runtime.sendMessage({
+            cancel_downloads: true
+        })
+    }
+})
+
+elements.download_status.parentNode.appendChild(cancelActiveButton)
+elements.download_status.parentNode.appendChild(cancelAllButton)
