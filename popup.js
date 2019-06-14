@@ -808,6 +808,167 @@ function scanPage() {
     )
 }
 
+//Help setup
+{
+    let helpButton = getOptionElem('', 'button', 'Help', () => {
+        showHelp()
+    })
+
+    let help = [
+        {
+            element: helpButton,
+            name: 'Help',
+            text: `Multi-File Downloader is an extension to make finding and downloading files linked in a website simple and quick.
+When the downloader popup is open (like now), the active tab will be scanned for links and other file download information. The files found are then displayed in a list. They can be filtered by specific names or types, and then downloaded.
+
+Occasionally websites use interactive links or other types of buttons, so that the actual file URL is only accessible after clicking a link. When a site does this, Multi-File downloader will be unable to find those files, and they will be missing from the file list.
+
+You can view this help at any time by clicking the 'Help' button.
+The different help parts are listed below, click on one to see more information about it.`
+        },
+        {
+            element: elements.controls,
+            name: 'Filters',
+            text: `'Media': Include visible images and videos found on a page (Links to images or videos are not affected by this filter).
+'Web links': Include links to urls with extensions commonly used for websites (.html, .php, etc).
+
+'Filter by name': Only include files where the URL or name includes the given filter.
+'Filter by type': Only include files where the file type (extension) includes the given filter.
+
+For both filters the default is to only include files which match the filter. You can also exclude files which match the filter, with the 'Exclude by...' option.
+Multiple filters can be used by entering a comma separated list.`
+        },
+        {
+            element: elements.list.parentNode,
+            name: 'Files',
+            text: `All files which match the filters are shown here.
+The Domain, full URL, Name, and Type are shown for each file in their respective columns.
+The Name entry can be edited.
+Each file can be enabled or disabled by clicking the toggle button in the leftmost column.
+Each file can be downloaded individually by clicking the download button in the rightmost column.`
+        },
+        {
+            element: elements.actions,
+            name: 'Downloading',
+            text: `'Sub-folder': A sub-folder of Chrome's download directory, into which files will be downloaded. Due to limitations with Chrome's downloads, files can only be downloaded to a location within Chrome's download directory.
+
+'Overwrite existing': If enabled, downloads will overwrite any already existing file with the same name.
+'Use custom name': If enabled, downloads will use whatever name is set in the Name entry as their filename.
+'Show save dialog': If enabled, will show the Save As dialog for every download.
+
+'Enable All': Enables all listed files.
+'Download All': Downloads all listed files which are enabled.`
+        },
+        {
+            element: elements.actions,
+            name: 'Options',
+            text: `'Rescan Page': Re-search the active tab for links to files. This will remove any changes you've made to file names.
+'Scan link text': Will take link text and use as the file name.
+
+'View Downloads': Opens Chrome's downloads page.
+'Open Options': Opens Multi-File Downloader extension options.
+'Help': Opens the help, which you're viewing now.`
+        },
+        {
+            element: elements.download_status.parentNode,
+            name: 'Downloads Status',
+            text: `Displays how many files are currently being downloaded.
+
+'Cancel From This Tab': Cancels all currently in-progress downloads which were downloaded from the active tab (or from any other tab with the same URL).
+'Cancel All': Cancels all currently in-progress downloads.`
+        }
+    ]
+
+    let activeIndex = -1
+
+    let helpElem = document.createElement('div')
+    helpElem.id = 'help'
+    helpElem.style.display = 'none'
+
+    let nameElem = document.createElement('h2')
+    let textElem = document.createElement('p')
+
+    function showHelp(index = 0) {
+        if (index < 0 || index >= help.length) {
+            index = 0
+        }
+        activeIndex = index
+
+        nameElem.textContent = help[index].name
+        textElem.textContent = help[index].text
+
+        let elem = document.querySelector('.help-highlight')
+        if (elem) {
+            elem.classList.remove('help-highlight')
+        }
+
+        elem = help[index].element
+
+        elem.classList.add('help-highlight')
+
+        let spaceAbove = elem.offsetTop
+        let spaceBelow =
+            window.innerHeight - (elem.offsetTop + elem.offsetHeight)
+
+        if (spaceAbove > spaceBelow) {
+            helpElem.style.bottom =
+                (window.innerHeight - spaceAbove).toString() + 'px'
+            helpElem.style.top = ''
+
+            helpElem.style.maxHeight = (spaceAbove - 5).toString() + 'px'
+        } else {
+            helpElem.style.top =
+                (elem.offsetTop + elem.offsetHeight).toString() + 'px'
+            helpElem.style.bottom = ''
+
+            helpElem.style.maxHeight = (spaceBelow - 5).toString() + 'px'
+        }
+
+        helpElem.style.display = ''
+    }
+
+    elements.actions.appendChild(helpButton)
+
+    helpElem.appendChild(document.createElement('div'))
+    helpElem.lastChild.appendChild(nameElem)
+    helpElem.appendChild(textElem)
+
+    helpElem.appendChild(document.createElement('ul'))
+
+    helpElem.firstChild.appendChild(document.createElement('a'))
+    helpElem.firstChild.lastChild.textContent = 'Close'
+    helpElem.firstChild.lastChild.addEventListener('click', () => {
+        helpElem.style.display = 'none'
+
+        let elem = document.querySelector('.help-highlight')
+        if (elem) {
+            elem.classList.remove('help-highlight')
+        }
+
+        activeIndex = -1
+    })
+
+    for (let i = 0; i < help.length; i++) {
+        helpElem.lastChild.appendChild(document.createElement('a'))
+        helpElem.lastChild.lastChild.textContent = help[i].name
+
+        helpElem.lastChild.lastChild.addEventListener(
+            'click',
+            showHelp.bind(null, i)
+        )
+    }
+
+    window.addEventListener('resize', () => {
+        if (activeIndex !== -1) {
+            showHelp(activeIndex)
+        }
+    })
+
+    document.body.appendChild(helpElem)
+
+    showHelp(0)
+}
+
 chrome.runtime.onMessage.addListener(message => {
     if (typeof message !== 'object') {
         return false

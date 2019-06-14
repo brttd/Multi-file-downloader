@@ -18,6 +18,64 @@ body > div {
   align-self: stretch;
 }
 
+#help {
+  box-sizing: border-box;
+  position: absolute;
+  left: 5px;
+  z-index: 150;
+  max-width: calc(100vw - 10px);
+  max-height: calc(100vh - 10px);
+  padding: 4px;
+  overflow: auto;
+  color: black;
+  border: 2px solid #550000;
+  border-radius: 2px;
+  background: white;
+}
+#help h2,
+#help p,
+#help a {
+  margin: 0;
+  padding: 3px 6px;
+  white-space: pre-wrap;
+}
+#help div {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+#help a {
+  margin-right: 4px;
+  cursor: pointer;
+}
+#help a:hover {
+  text-decoration: underline;
+}
+#help ul {
+  border-top: 1px solid #550000;
+  margin: 4px 0;
+  padding-top: 4px;
+  background: transparent;
+}
+
+.help-highlight {
+  position: relative;
+  z-index: 125;
+  border-color: #aa3939 !important;
+  outline: 2px solid #aa3939 !important;
+  overflow: hidden !important;
+}
+.help-highlight::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #aa3939;
+  opacity: 0.3;
+}
+
 #status {
   display: flex;
   flex-flow: column;
