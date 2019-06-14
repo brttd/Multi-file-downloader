@@ -28,6 +28,7 @@ const options = {
 
 const elements = {
     status: document.getElementById('status'),
+    download_status: document.getElementById('download_status'),
     controls: document.getElementById('controls'),
     actions: document.getElementById('actions'),
     list: document.getElementById('list')
@@ -770,6 +771,30 @@ chrome.runtime.onMessage.addListener(message => {
 
         updateList()
     }
+
+    if (typeof message.downloads === 'object') {
+        console.log(message.downloads)
+
+        if (message.downloads.active === 0) {
+            elements.download_status.textContent = 'No active downloads'
+            elements.download_status.className = ''
+        } else if (message.downloads.active === 1) {
+            elements.download_status.textContent = '1 active download'
+            elements.download_status.className = 'active'
+        } else {
+            elements.download_status.textContent =
+                message.downloads.active.toString() + ' active downloads'
+
+            elements.download_status.className = 'active'
+        }
+
+        if (message.downloads.waiting >= 1) {
+            elements.download_status.textContent +=
+                ', ' + message.downloads.waiting.toString() + ' waiting.'
+        } else {
+            elements.download_status.textContent += '.'
+        }
+    }
 })
 
 elements.list.addEventListener('click', event => {
@@ -867,3 +892,5 @@ chrome.extension.isAllowedFileSchemeAccess(allowed => {
         console.log('File URL access is not allowed')
     }
 })
+
+chrome.runtime.sendMessage('get-stats')
