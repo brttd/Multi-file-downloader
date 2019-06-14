@@ -580,8 +580,10 @@ function scanPage() {
 
             if (useStorage) {
                 chrome.storage.sync.get(optionName, result => {
-                    elem.lastChild.value = result[optionName]
-                    onOptionChange.call(elem.lastChild, optionName)
+                    if (result.hasOwnProperty(optionName)) {
+                        elem.lastChild.value = result[optionName]
+                        onOptionChange.call(elem.lastChild, optionName)
+                    }
                 })
 
                 elem.lastChild.addEventListener(
