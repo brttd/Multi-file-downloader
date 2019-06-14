@@ -150,7 +150,7 @@ body > div {
   background: #2d882d;
 }
 #download_status.active button:active {
-  background: #88cc88;
+  background: #55aa55;
   border-color: #2d882d;
 }
 #download_status.active::before, #download_status.active::after {
@@ -237,7 +237,7 @@ iteration-count | direction | fill-mode | play-state | name */
 }
 #controls button.highlight:active,
 #actions button.highlight:active {
-  background: #88cc88;
+  background: #55aa55;
   border-color: #2d882d;
 }
 #controls input,
