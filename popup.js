@@ -839,6 +839,8 @@ function scanPage() {
 
                 elements.status.firstElementChild.textContent = message
                 elements.status.style.display = ''
+            } else {
+                document.body.parentElement.style.width = '1000vw'
             }
         }
     )
