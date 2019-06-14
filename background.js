@@ -190,7 +190,10 @@ chrome.storage.sync.get('max_downloads', result => {
             return false
         }
 
-        if (typeof changes.max_downloads.newValue === 'number') {
+        if (
+            typeof changes.max_downloads === 'object' &&
+            typeof changes.max_downloads.newValue === 'number'
+        ) {
             if (
                 isFinite(changes.max_downloads.newValue) &&
                 changes.max_downloads.newValue >= 1
