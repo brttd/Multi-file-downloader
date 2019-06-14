@@ -450,6 +450,29 @@ function saveFilterOptions() {
     }, 1000)
 }
 
+function scanPage() {
+    chrome.tabs.executeScript(
+        activeTabId,
+        {
+            file: 'page_script.js'
+        },
+        e => {
+            if (e === undefined) {
+                let message = 'Unable to access tab!'
+
+                if (chrome.runtime.lastError) {
+                    message += '\n\n' + chrome.runtime.lastError.message
+                }
+
+                elements.status.firstElementChild.textContent = message
+                elements.status.style.display = ''
+            } else {
+                document.body.parentElement.style.width = '1000vw'
+            }
+        }
+    )
+}
+
 //Interface setup
 {
     function onBoolOptionChange(optionName) {
@@ -883,29 +906,6 @@ elements.list.addEventListener('click', event => {
         }
     }
 })
-
-function scanPage() {
-    chrome.tabs.executeScript(
-        activeTabId,
-        {
-            file: 'page_script.js'
-        },
-        e => {
-            if (e === undefined) {
-                let message = 'Unable to access tab!'
-
-                if (chrome.runtime.lastError) {
-                    message += '\n\n' + chrome.runtime.lastError.message
-                }
-
-                elements.status.firstElementChild.textContent = message
-                elements.status.style.display = ''
-            } else {
-                document.body.parentElement.style.width = '1000vw'
-            }
-        }
-    )
-}
 
 chrome.tabs.query(
     { active: true, lastFocusedWindow: true, currentWindow: true },
