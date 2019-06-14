@@ -41,17 +41,54 @@ body > div {
 }
 
 #download_status {
+  display: flex;
+  flex-flow: row;
   position: relative;
   z-index: 100;
-  min-height: 2.5ch;
   margin: 0;
-  padding: 3px 6px;
+  padding: 0;
   color: black;
   background: #e6e5e5;
+}
+#download_status p {
+  flex: 1 1 auto;
+  margin: 3px 6px;
+  padding: 0;
+}
+#download_status button {
+  flex: 0 0 auto;
+  border: none;
+  outline: none;
+  color: white;
+  background: #116611;
+}
+#download_status button {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 2px;
+  padding: 3px 6px;
+  color: black;
+  border: 1px solid #b9b8b8;
+  border-radius: 3px;
+  background: #e6e5e5;
+  outline: none;
+}
+#download_status button:active {
+  background: #b9b8b8;
+  border-color: #898989;
 }
 #download_status.active {
   color: white;
   background: #2d882d;
+}
+#download_status.active button {
+  color: white;
+  border-color: #116611;
+  background: #2d882d;
+}
+#download_status.active button:active {
+  background: #88cc88;
+  border-color: #2d882d;
 }
 #download_status.active::before, #download_status.active::after {
   content: '';
