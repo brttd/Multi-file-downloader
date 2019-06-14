@@ -48,6 +48,7 @@ body > div {
   margin: 0;
   padding: 0;
   color: black;
+  border-bottom: 1px solid #b9b8b8;
   background: #e6e5e5;
 }
 #download_status p {
@@ -77,8 +78,12 @@ body > div {
   background: #b9b8b8;
   border-color: #898989;
 }
+#download_status button[disabled] {
+  opacity: 0.5;
+}
 #download_status.active {
   color: white;
+  border-color: #116611;
   background: #2d882d;
 }
 #download_status.active button {
