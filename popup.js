@@ -966,7 +966,16 @@ Each file can be downloaded individually by clicking the download button in the 
 
     document.body.appendChild(helpElem)
 
-    showHelp(0)
+    chrome.storage.local.get('help_shown_2-1', result => {
+        if (!result['help_shown_2-1']) {
+            showHelp()
+
+            let obj = {}
+            obj['help_shown_2-1'] = true
+
+            chrome.storage.local.set(obj)
+        }
+    })
 }
 
 chrome.runtime.onMessage.addListener(message => {
