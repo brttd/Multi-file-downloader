@@ -21,6 +21,6 @@ Basic options page, uses popup.css for styling and a small script to save option
 ### page_script.js
 Injected into the active tab when the extension popup is shown, searches for links and media elements to get file download URLS.
 
-## popup.html / popup.js
+### popup.html / popup.js
 Shows file list, filtering options, download options, and a download status bar.
 
