@@ -904,55 +904,60 @@ function scanPage() {
         {
             element: helpButton,
             name: 'Help',
-            content: `<b>Multi-File Downloader</b> is an extension to make finding and downloading files linked in a website simple and quick.
-When the downloader popup is open (like now), the active tab will be scanned for links and other file download information. The files found are then displayed in a list. They can be filtered by specific names or types downloaded.
+            content: `<i>Multi-File Downloader</i> is an extension to make finding and downloading files from websites simple and quick.
+When the downloader popup is open (like now), the active tab will be scanned for links and other file download information. Any files found are then displayed in a the <i>File List</i>. They can be filtered by name or file type.
 
-Occasionally websites use interactive links or other types of buttons, so that the actual file URL is only accessible after clicking a link. When a site does this, Multi-File downloader will be unable to find those files, and they will be missing from the file list.
+Occasionally websites use interactive links or other types of buttons so that the actual file URL is only given after clicking a link. When a site does this, <i>Multi-File Downloader</i> will be unable to find those files and they will not appear in the <i>File List</i>.
 
-You can view this help at any time by clicking the <b>Help</b> button.
-The different help parts are listed below, click on one to see more information about it.`
+You can view this help at any time by clicking the <b>Help</b> button. You can close it by clicking the <b>Close</b> button in the top right.
+The help is divided into different parts for each section of the popup interface, listed below. Click on a section to view the information about it.`
         },
         {
             element: elements.controls,
             name: 'Filters',
-            content: `<b>Visible Media</b>: Include visible images and videos found on a page (Links to images or videos are not affected by this filter).
-<b>Web links</b>: Include links to urls with extensions commonly used for websites (.html, .php, etc).
+            content: `The files found on a page can be filtered before being downloaded.
+<b>Visible Media</b>: Include images and videos shown directly in pages (links to media files will be included regardless of this option).
+<b>Web links</b>: Include links with extensions commonly used for websites (.html, .php, etc).
 
-<b>Filter by name</b>: Only include files where the URL or name includes the given filter.
-<b>Filter by type</b>: Only include files where the file type (extension) includes the given filter.
+<b>Filter by name</b>: Only files where the URL or name matches will be listed.
+<b>Filter by type</b>: Only files where the file type (extension) matches will be listed.
 
-For both filters the default is to only include files which match the filter. You can also exclude files which match the filter, with the <b>Exclude by...</b> option.
-Multiple filters can be used by entering a comma separated list.`
+If multiple filters are needed, you can enter each one separated by a comma.
+
+<b>Exclude by name/type</b>: Files which match the filter will be excluded from the list.`
         },
         {
             element: elements.list.parentNode,
-            name: 'Files',
-            content: `All files which match the filters are shown here.
-The Domain, full URL, Name, and Type are shown for each file in their respective columns.
-The Name entry can be edited.
+            name: 'File List',
+            content: `All files found on a page which match the filters are shown here.
+The list can be sorted by <b>Domain</b>, <b>URL</b>, <b>Name</b>, and <b>Type</b>. Click on a column to sort it, or reverse the sort direction.
+The <b>Name</b> column can be edited to give a custom filename used when the files are downloaded.
+
 Each file can be enabled or disabled by clicking the toggle button in the leftmost column.
-Each file can be downloaded individually by clicking the download button in the rightmost column.`
+Each file can be downloaded on it's own by clicking the download button in the rightmost column.`
         },
         {
             element: elements.actions,
             name: 'Downloading',
-            content: `<b>Sub-folder</b>: A sub-folder of Chrome's download directory, into which files will be downloaded. Due to limitations with Chrome's downloads, files can only be downloaded to a location within Chrome's download directory.
+            content: `<b>Sub-folder</b>: A sub-folder of Chrome's download folder, into which files will be downloaded.
+Due to limitations with Chrome's download system, files can only be downloaded to Chrome's downloads folder, or a sub-folder within it.
 
-<b>Overwrite existing</b>: If enabled, downloads will overwrite any already existing file with the same name.
-<b>Use custom name</b>: If enabled, downloads will use whatever name is set in the Name entry as their filename.
+<b>Overwrite existing</b>: If enabled, new downloads will overwrite any already existing file with the same name.
+<b>Use custom name</b>: If enabled, downloads will the <b>Name</b> entry in the <i>File List</i>. Otherwise, the default name of the file will be used.
 <b>Show save dialog</b>: If enabled, will show the Save As dialog for every download.
 
-<b>Enable All</b>: Enables all listed files.
-<b>Download All</b>: Downloads all listed files which are enabled.`
+<b>✖</b>: Disable all files.
+<b>✔</b>: Enable all files.
+<b>Download</b>: Download all enabled files.`
         },
         {
             element: elements.actions,
             name: 'Options',
-            content: `<b>Rescan Page</b>: Re-search the active tab for links to files. This will remove any changes you've made to file names.
-<b>Scan link text</b>: Will take link text and use as the file name.
+            content: `<b>Rescan Page</b>: Searches the active tab for links again. This will reset the <i>File List</i>!
+<b>Scan link text</b>: Will take link text and use it as the file name.
 
 <b>View Downloads</b>: Opens Chrome's downloads page.
-<b>Open Options</b>: Opens Multi-File Downloader extension options.
+<b>Open Options</b>: Opens the <i>Multi-File Downloader</i> extension options.
 <b>Help</b>: Opens the help, which you're viewing now.`
         },
         {
@@ -972,13 +977,20 @@ Each file can be downloaded individually by clicking the download button in the 
     helpElem.style.display = 'none'
 
     let nameElem = document.createElement('h2')
-    let textElem = document.createElement('p')
+    let textElem = document.createElement('div')
+    textElem.id = 'content'
 
     function showHelp(index = 0) {
         if (index < 0 || index >= help.length) {
             index = 0
         }
         activeIndex = index
+
+        let currentActive = document.querySelector('#help .active')
+        if (currentActive) {
+            currentActive.classList.remove('active')
+        }
+        helpElem.lastChild.children[index].classList.add('active')
 
         nameElem.textContent = help[index].name
         textElem.innerHTML = help[index].content
@@ -998,14 +1010,14 @@ Each file can be downloaded individually by clicking the download button in the 
 
         if (spaceAbove > spaceBelow) {
             helpElem.style.bottom =
-                (window.innerHeight - spaceAbove).toString() + 'px'
-            helpElem.style.top = ''
+                (window.innerHeight - spaceAbove + 5).toString() + 'px'
+            helpElem.style.top = '5px'
 
             helpElem.style.maxHeight = (spaceAbove - 5).toString() + 'px'
         } else {
             helpElem.style.top =
-                (elem.offsetTop + elem.offsetHeight).toString() + 'px'
-            helpElem.style.bottom = ''
+                (elem.offsetTop + elem.offsetHeight + 5).toString() + 'px'
+            helpElem.style.bottom = '5px'
 
             helpElem.style.maxHeight = (spaceBelow - 5).toString() + 'px'
         }
@@ -1018,6 +1030,7 @@ Each file can be downloaded individually by clicking the download button in the 
     elements.actions.appendChild(helpButton)
 
     helpElem.appendChild(document.createElement('div'))
+    helpElem.lastChild.id = 'bar'
     helpElem.lastChild.appendChild(nameElem)
     helpElem.appendChild(textElem)
 
