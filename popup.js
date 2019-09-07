@@ -1011,6 +1011,8 @@ Each file can be downloaded individually by clicking the download button in the 
         }
 
         helpElem.style.display = ''
+        elements.status.style.display = ''
+        elements.status.firstChild.textContent = ''
     }
 
     elements.actions.appendChild(helpButton)
@@ -1025,6 +1027,7 @@ Each file can be downloaded individually by clicking the download button in the 
     helpElem.firstChild.lastChild.textContent = 'Close'
     helpElem.firstChild.lastChild.addEventListener('click', () => {
         helpElem.style.display = 'none'
+        elements.status.style.display = 'none'
 
         let elem = document.querySelector('.help-highlight')
         if (elem) {
