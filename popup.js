@@ -757,8 +757,21 @@ function scanPage() {
 
     elements.actions.appendChild(document.createElement('hr'))
 
+    //Disable all button
     elements.actions.appendChild(
-        getOptionElem('', 'button', 'Enable All', () => {
+        getOptionElem('highlight-negative', 'button', '✖', () => {
+            for (let i = 0; i < allFiles.length; i++) {
+                allFiles[i].enabled = false
+            }
+            for (let i = 0; i < list.childNodes.length; i++) {
+                list.childNodes[i].className = 'disabled'
+                list.childNodes[i].firstChild.textContent = '✖'
+            }
+        })
+    )
+    //Enable all button
+    elements.actions.appendChild(
+        getOptionElem('highlight', 'button', '✔', () => {
             for (let i = 0; i < allFiles.length; i++) {
                 allFiles[i].enabled = true
             }
@@ -768,9 +781,9 @@ function scanPage() {
             }
         })
     )
-
+    //Download all button
     elements.actions.appendChild(
-        getOptionElem('highlight', 'button', 'Download All', () => {
+        getOptionElem('highlight', 'button', 'Download', () => {
             let duplicates = []
 
             for (let i = 0; i < allFiles.length; i++) {
