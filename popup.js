@@ -618,7 +618,7 @@ function scanPage() {
     }
 
     elements.controls.appendChild(
-        getOptionElem('include_media', 'checkbox', 'Media', null, true)
+        getOptionElem('include_media', 'checkbox', 'Visible Media', null, true)
     )
     elements.controls.appendChild(
         getOptionElem(
