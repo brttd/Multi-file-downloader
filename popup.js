@@ -831,12 +831,14 @@ function scanPage() {
 
     elements.actions.appendChild(document.createElement('p'))
 
+    //Open downloads page
     elements.actions.appendChild(
         getOptionElem('', 'button', 'View Downloads', () => {
             chrome.tabs.create({ url: 'chrome://downloads' })
         })
     )
 
+    //Open extension options
     elements.actions.appendChild(
         getOptionElem('', 'button', 'Open Options', () => {
             chrome.runtime.openOptionsPage()
