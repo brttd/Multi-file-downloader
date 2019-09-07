@@ -89,6 +89,8 @@ body > div {
   right: 0;
   bottom: 0;
   margin: 0;
+  padding: 10px;
+  padding-top: 38px;
   color: black;
   background: #fff8e7;
 }
