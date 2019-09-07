@@ -37,13 +37,27 @@ const elements = {
 
 const fileEntryElementPool = []
 
+const fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
+const dotRegex = new RegExp(/\./)
+const invalidPathRegex = new RegExp(/:[\\\/]/)
+const newlineRegex = new RegExp(/\n/g)
+
+const sortFns = {
+    domain: (a, b) => a.domain.localeCompare(b.domain),
+    domain_r: (a, b) => b.domain.localeCompare(a.domain),
+
+    url: (a, b) => a.url.localeCompare(b.url),
+    url_r: (a, b) => b.url.localeCompare(a.url),
+
+    name: (a, b) => (a.name || a.urlName).localeCompare(b.name || b.urlName),
+    name_r: (a, b) => (b.name || b.urlName).localeCompare(a.name || b.urlName),
+
+    ext: (a, b) => a.ext.localeCompare(b.ext),
+    ext_r: (a, b) => b.ext.localeCompare(a.ext)
+}
+
 let activeTabUrl = null
 let activeTabId = null
-
-let fileExtRegex = new RegExp(/\.([0-9a-z]+)(?:[\?#]|$)/i)
-let dotRegex = new RegExp(/\./)
-let invalidPathRegex = new RegExp(/:[\\\/]/)
-let newlineRegex = new RegExp(/\n/g)
 
 let webFileTypes = [
     'asp',
@@ -80,6 +94,11 @@ let webFileTypes = [
     'cgi',
     'dll'
 ]
+
+let fileSort = {
+    reverse: false,
+    field: 'url'
+}
 
 let allFiles = []
 
@@ -177,10 +196,10 @@ function listFile(file) {
         entry.className = 'disabled'
     }
 
-    entry.children[1].textContent = getFileDomain(file.url)
+    entry.children[1].textContent = file.domain
     entry.children[2].textContent = file.url
-    entry.children[3].value = file.name || getFileName(file.url)
-    entry.children[4].textContent = getFileExt(file.url)
+    entry.children[3].value = file.name || file.urlName
+    entry.children[4].textContent = file.ext
 
     entry._index = allFiles.indexOf(file)
 
@@ -194,9 +213,7 @@ function filterFileResult(file) {
         return false
     }
 
-    let ext = getFileExt(file.url).toLowerCase()
-
-    if (!options.include_website_links && webFileTypes.includes(ext)) {
+    if (!options.include_website_links && webFileTypes.includes(file.ext)) {
         return false
     }
 
@@ -211,7 +228,7 @@ function filterFileResult(file) {
         let found = false
 
         for (let i = 0; i < options.filters.ext.length; i++) {
-            if (ext.includes(options.filters.ext[i])) {
+            if (file.ext.includes(options.filters.ext[i])) {
                 found = true
                 break
             }
@@ -223,7 +240,7 @@ function filterFileResult(file) {
     }
     if (options.filters.ext_exclude) {
         for (let i = 0; i < options.filters.ext_exclude.length; i++) {
-            if (ext.includes(options.filters.ext_exclude[i])) {
+            if (file.ext.includes(options.filters.ext_exclude[i])) {
                 return false
             }
         }
@@ -264,6 +281,10 @@ function filterFileResult(file) {
 }
 
 function updateList() {
+    if (sortFns[fileSort.field + (fileSort.reverse ? '_r' : '')]) {
+        allFiles.sort(sortFns[fileSort.field + (fileSort.reverse ? '_r' : '')])
+    }
+
     if (options.filter_regex) {
         try {
             options.filters.regex = new RegExp(options.filter_regex)
@@ -810,6 +831,54 @@ function scanPage() {
     )
 }
 
+//file sort setup
+{
+    const tabs = {
+        domain: document.getElementById('tab_domain'),
+        url: document.getElementById('tab_url'),
+        name: document.getElementById('tab_name'),
+        ext: document.getElementById('tab_ext')
+    }
+
+    function setSort(field, reverse) {
+        fileSort.field = field
+        fileSort.reverse = reverse
+
+        for (let tabName in tabs) {
+            if (tabs[tabName].classList.contains('sort')) {
+                tabs[tabName].classList.remove('sort')
+            }
+            if (tabs[tabName].classList.contains('sort_r')) {
+                tabs[tabName].classList.remove('sort_r')
+            }
+
+            if (tabName === field) {
+                if (reverse) {
+                    tabs[tabName].classList.add('sort_r')
+                } else {
+                    tabs[tabName].classList.add('sort')
+                }
+            }
+        }
+
+        updateList()
+    }
+
+    function onTabClick(tabName) {
+        if (tabs[tabName].classList.contains('sort')) {
+            setSort(tabName, true)
+        } else {
+            setSort(tabName, false)
+        }
+    }
+
+    for (let tabName in tabs) {
+        tabs[tabName].addEventListener('click', onTabClick.bind(null, tabName))
+    }
+
+    setSort('name', false)
+}
+
 //Help setup
 {
     let helpButton = getOptionElem('', 'button', 'Help', () => {
@@ -1000,11 +1069,17 @@ chrome.runtime.onMessage.addListener(message => {
         allFiles = []
 
         for (let i = 0; i < message.files.length; i++) {
-            message.files[i].active = false
-            message.files[i].enabled = true
-            message.files[i]._originalName = message.files[i].name
+            if (message.files[i].url) {
+                message.files[i].active = false
+                message.files[i].enabled = true
+                message.files[i]._originalName = message.files[i].name
 
-            allFiles.push(message.files[i])
+                message.files[i].domain = getFileDomain(message.files[i].url)
+                message.files[i].urlName = getFileName(message.files[i].url)
+                message.files[i].ext = getFileExt(message.files[i].url)
+
+                allFiles.push(message.files[i])
+            }
         }
 
         updateList()
