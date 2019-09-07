@@ -318,9 +318,21 @@ ul {
 ul#header {
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 ul#header span {
-  background: #ebebeb;
+  background: #eeeded;
+  border-top: 4px solid #eeeded;
+  border-bottom: 2px solid #eeeded;
+}
+ul#header .tab.sort, ul#header .tab.sort_r {
+  border-top-color: #b9b8b8;
+}
+ul#header .tab.sort::after {
+  content: ' ⮟';
+}
+ul#header .tab.sort_r::after {
+  content: ' ⮝';
 }
 ul#list:empty::after {
   content: 'No Files!';
