@@ -1,0 +1,123 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui;
+  font-size: 14px;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  max-width: 100vw;
+  padding: 6px;
+  padding-top: 0;
+}
+body > div {
+  align-self: stretch;
+}
+
+#inputs {
+  flex: 0 0 auto;
+  height: fit-content;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  padding: 6px 12px;
+}
+#inputs .message:empty {
+  display: none;
+}
+#inputs hr {
+  flex-basis: 100%;
+  width: 0px;
+  height: 0px;
+  margin: 0;
+  border: none;
+}
+#inputs p {
+  flex: 1 1 auto;
+  margin: 0;
+}
+#inputs button {
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 6px;
+  padding: 6px 10px;
+  color: black;
+  border: 1px solid #b9b8b8;
+  border-radius: 3px;
+  background: #e6e5e5;
+  outline: none;
+}
+#inputs button:active {
+  background: #b9b8b8;
+  border-color: #898989;
+}
+#inputs button.highlight {
+  color: white;
+  border-color: #116611;
+  background: #2d882d;
+}
+#inputs button.highlight:active {
+  background: #55aa55;
+  border-color: #2d882d;
+}
+#inputs button.highlight-negative {
+  color: white;
+  border-color: #801515;
+  background: #aa3939;
+}
+#inputs button.highlight-negative:active {
+  background: #d46a6a;
+  border-color: #aa3939;
+}
+#inputs input {
+  padding: 3px 5px;
+}
+#inputs div {
+  flex: 1 1 auto;
+  align-self: flex-start;
+  min-width: fit-content;
+  max-width: 35ch;
+  margin: 6px;
+  padding: 6px;
+}
+#inputs div.multi {
+  padding: 6px 0;
+}
+#inputs div.multi div {
+  margin: 0;
+  padding: 0 6px;
+}
+#inputs div.multi div + div {
+  padding-top: 6px;
+}
+#inputs div.regex {
+  max-width: 70ch;
+}
+#inputs div input,
+#inputs div label {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0;
+}
+#inputs div label {
+  padding-bottom: 1.5px;
+}
+#inputs div.checkbox {
+  flex: 0 0 auto;
+  align-self: center;
+}
+#inputs div.checkbox input,
+#inputs div.checkbox label {
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  padding: 0;
+}
+#inputs div.checkbox input {
+  margin-right: 3px;
+  margin-top: 4px;
+}
