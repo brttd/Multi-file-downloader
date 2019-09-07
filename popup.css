@@ -428,7 +428,7 @@ ul li textarea.type {
 ul li span.url, ul li span.type,
 ul li textarea.url,
 ul li textarea.type {
-  background: #ebebeb;
+  background: #eeeded;
 }
 ul li.disabled .toggle-button {
   background: #aa3939;
