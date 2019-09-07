@@ -23,10 +23,13 @@ body > div {
   box-sizing: border-box;
   position: absolute;
   left: 5px;
+  right: 5px;
   z-index: 150;
+  display: flex;
+  flex-flow: column nowrap;
   max-width: calc(100vw - 10px);
   max-height: calc(100vh - 10px);
-  padding: 4px;
+  padding: 0;
   overflow: auto;
   color: black;
   background: #e6e5e5;
@@ -34,11 +37,26 @@ body > div {
   border-radius: 3px;
   background: white;
 }
+#help div,
+#help ul,
 #help h2,
 #help p,
 #help a {
   margin: 0;
-  padding: 3px 6px;
+  padding: 4px 8px;
+}
+#help #bar {
+  border-bottom: 1px solid #b9b8b8;
+  align-items: center;
+}
+#help #bar h2,
+#help #bar a {
+  padding: 0;
+}
+#help #content {
+  display: block;
+  flex: 1 1 auto;
+  overflow: auto;
   white-space: pre-wrap;
 }
 #help div {
@@ -55,17 +73,32 @@ body > div {
 }
 #help ul {
   border-top: 1px solid #898989;
-  margin: 4px 0;
-  padding-top: 4px;
+  margin: 0;
+  margin-top: 4px;
+  padding: 0;
   background: transparent;
   font-weight: bold;
+}
+#help ul a {
+  display: inline-block;
+  margin: 0;
+  padding: 8px 12px;
+}
+#help ul a:hover {
+  background: #e6e5e5;
+}
+#help ul a.active {
+  color: white;
+  background: #b9b8b8;
 }
 
 .help-highlight {
   position: relative;
   z-index: 125;
+  user-select: none;
+  pointer-events: none;
   background: white;
-  outline: 10px solid white !important;
+  outline: 30px solid white !important;
   overflow: visible !important;
 }
 .help-highlight::after {
