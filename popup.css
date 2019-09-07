@@ -353,6 +353,7 @@ iteration-count | direction | fill-mode | play-state | name */
 }
 
 #table {
+  flex: 1 1 auto;
   overflow-y: auto;
   position: relative;
   max-width: 800px;
@@ -385,8 +386,14 @@ ul#header .tab.sort_r::after {
 }
 ul#list:empty::after {
   content: 'No Files!';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: block;
   padding: 6px;
+  padding-top: 36px;
   color: white;
   text-align: center;
   background: #aa3939;
