@@ -97,7 +97,7 @@ let webFileTypes = [
 
 let fileSort = {
     reverse: false,
-    field: 'url'
+    field: 'name'
 }
 
 let allFiles = []
