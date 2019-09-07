@@ -28,8 +28,9 @@ body > div {
   padding: 4px;
   overflow: auto;
   color: black;
-  border: 2px solid #550000;
-  border-radius: 2px;
+  background: #e6e5e5;
+  border: 2px solid #b9b8b8;
+  border-radius: 3px;
   background: white;
 }
 #help h2,
@@ -52,18 +53,19 @@ body > div {
   text-decoration: underline;
 }
 #help ul {
-  border-top: 1px solid #550000;
+  border-top: 1px solid #898989;
   margin: 4px 0;
   padding-top: 4px;
   background: transparent;
+  font-weight: bold;
 }
 
 .help-highlight {
   position: relative;
   z-index: 125;
-  border-color: #aa3939 !important;
-  outline: 2px solid #aa3939 !important;
-  overflow: hidden !important;
+  background: white;
+  outline: 10px solid white !important;
+  overflow: visible !important;
 }
 .help-highlight::after {
   content: '';
@@ -72,7 +74,6 @@ body > div {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #aa3939;
   opacity: 0.3;
 }
 
