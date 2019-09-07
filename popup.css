@@ -220,7 +220,7 @@ iteration-count | direction | fill-mode | play-state | name */
   flex: 0 0 auto;
   align-self: center;
   margin: 2px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   color: black;
   border: 1px solid #b9b8b8;
   border-radius: 3px;
@@ -243,9 +243,20 @@ iteration-count | direction | fill-mode | play-state | name */
   background: #55aa55;
   border-color: #2d882d;
 }
+#controls button.highlight-negative,
+#actions button.highlight-negative {
+  color: white;
+  border-color: #801515;
+  background: #aa3939;
+}
+#controls button.highlight-negative:active,
+#actions button.highlight-negative:active {
+  background: #d46a6a;
+  border-color: #aa3939;
+}
 #controls input,
 #actions input {
-  padding: 3px 6px;
+  padding: 3px 5px;
 }
 #controls div,
 #actions div {
